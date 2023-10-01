@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-09-28T01:03:06.194799+00:00",
+  "timestamp": "2023-10-01T01:11:22.489044+00:00",
   "repo": "tlswg/draft-ietf-tls-esni",
   "labels": [
     {
@@ -11913,6 +11913,22 @@
       "body": "In https://github.com/tlswg/draft-ietf-tls-esni/pull/553/files we added registration of the \"ech\" codepoint.  It is also in draft-ietf-tls-svcb-ech which will be confusing if they are both updating the codepoint.  We likely want to remove this registration and update SVCB/HTTPS RR references to point to draft-ietf-tls-svcb-ech.",
       "createdAt": "2023-09-26T21:34:16Z",
       "updatedAt": "2023-09-26T21:34:16Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 555,
+      "id": "I_kwDOB-yxNc5ycNcn",
+      "title": "Do ECHConfig extensions use the same ExtensionType enum from TLS?",
+      "url": "https://github.com/tlswg/draft-ietf-tls-esni/issues/555",
+      "state": "OPEN",
+      "author": "davidben",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I'm not sure how I only noticed this now, but `ECHConfigContents` reuses the TLS `Extension` structure...\r\n\r\n```\r\n    struct {\r\n        ExtensionType extension_type;\r\n        opaque extension_data<0..2^16-1>;\r\n    } Extension;\r\n```\r\n\r\nThat would suggest ECH uses the same `ExtensionType` enum as TLS extensions. I.e. we share a codepoint space and registry. But then we don't do anything with the \"TLS 1.3\" column. We also introduce our own rule here:\r\n\r\n> An extension can be tagged as mandatory by using an extension type codepoint with the high order bit set to 1.\r\n\r\nBut if it's meant to be a separate enum, we haven't defined the name of the enum or a registry or anything, it's unclear how anyone could allocate them. We'd probably also need our own struct definition to inject the new enum in there.",
+      "createdAt": "2023-09-29T23:04:37Z",
+      "updatedAt": "2023-09-29T23:04:37Z",
       "closedAt": null,
       "comments": []
     }
