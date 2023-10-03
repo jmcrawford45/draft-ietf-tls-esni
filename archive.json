@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-10-01T01:11:22.489044+00:00",
+  "timestamp": "2023-10-03T01:03:54.275952+00:00",
   "repo": "tlswg/draft-ietf-tls-esni",
   "labels": [
     {
@@ -11928,9 +11928,24 @@
       "labels": [],
       "body": "I'm not sure how I only noticed this now, but `ECHConfigContents` reuses the TLS `Extension` structure...\r\n\r\n```\r\n    struct {\r\n        ExtensionType extension_type;\r\n        opaque extension_data<0..2^16-1>;\r\n    } Extension;\r\n```\r\n\r\nThat would suggest ECH uses the same `ExtensionType` enum as TLS extensions. I.e. we share a codepoint space and registry. But then we don't do anything with the \"TLS 1.3\" column. We also introduce our own rule here:\r\n\r\n> An extension can be tagged as mandatory by using an extension type codepoint with the high order bit set to 1.\r\n\r\nBut if it's meant to be a separate enum, we haven't defined the name of the enum or a registry or anything, it's unclear how anyone could allocate them. We'd probably also need our own struct definition to inject the new enum in there.",
       "createdAt": "2023-09-29T23:04:37Z",
-      "updatedAt": "2023-09-29T23:04:37Z",
+      "updatedAt": "2023-10-01T19:57:29Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "ekr",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I concur with @davidben here, and I think we just need a new registry.\r\n",
+          "createdAt": "2023-10-01T19:00:08Z",
+          "updatedAt": "2023-10-01T19:00:25Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "+1 to a new registry, I'd be even happier if we ditched the concept entirely and left extensibility to only be exercised via the TLS extension code-point; if we're not willing to do that then I'd be moderately happy if we removed the mandatory ECHConfig idea - deploying one of those is really going to be like a new TLS extension code-point so there's no benefit I think\r\n\r\nnote: I expect I'm probably in the rough there but no harm trying:-)\r\n",
+          "createdAt": "2023-10-01T19:57:09Z",
+          "updatedAt": "2023-10-01T19:57:29Z"
+        }
+      ]
     }
   ],
   "pulls": [
