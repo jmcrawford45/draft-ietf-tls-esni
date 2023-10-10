@@ -5,11 +5,11 @@
 tls                                                          E. Rescorla
 Internet-Draft                                                RTFM, Inc.
 Intended status: Standards Track                                  K. Oku
-Expires: 11 April 2024                                            Fastly
+Expires: 12 April 2024                                            Fastly
                                                              N. Sullivan
                                                               C. A. Wood
                                                               Cloudflare
-                                                          9 October 2023
+                                                         10 October 2023
 
 
                        TLS Encrypted Client Hello
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 April 2024.
+   This Internet-Draft will expire on 12 April 2024.
 
 Copyright Notice
 
@@ -951,7 +951,7 @@ Table of Contents
    address if provided with options from DNS.  ECH does not mandate any
    specific implementation choices when establishing this new
    connection.)  The retry configurations may only be applied to the
-   retry connection.  The client MUST NOT use retry configurations for
+   retried connection.  The client MUST NOT use retry configurations for
    connections beyond the retry.  This avoids introducing pinning
    concerns or a tracking vector, should a malicious server present
    client-specific retry configurations in order to identify the client
