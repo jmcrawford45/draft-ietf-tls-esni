@@ -2312,24 +2312,25 @@ alert before sending any application data to the server.<a href="#section-6.1.6-
 contains a version supported by the client, the client can regard the ECH keys
 as securely replaced by the server. It SHOULD retry the handshake with a new
 transport connection, using the retry configurations supplied by the
-server. (Clients can implement a new transport connection in a way that best
+server.<a href="#section-6.1.6-3" class="pilcrow">¶</a></p>
+<p id="section-6.1.6-4">Clients can implement a new transport connection in a way that best
 suits their deployment. For example, clients can reuse the same IP address
 when establishing the new transport connection or they can choose to use a
 different IP address if provided with options from DNS. ECH does not mandate
-any specific implementation choices when establishing this new connection.)
-The retry configurations may only be applied to the retried connection. The
+any specific implementation choices when establishing this new connection.<a href="#section-6.1.6-4" class="pilcrow">¶</a></p>
+<p id="section-6.1.6-5">The retry configurations may only be applied to the retried connection. The
 client MUST NOT use retry configurations for connections beyond the retry.
 This avoids introducing pinning concerns or a tracking vector, should a
 malicious server present client-specific retry configurations in order to
-identify the client in a subsequent ECH handshake.<a href="#section-6.1.6-3" class="pilcrow">¶</a></p>
-<p id="section-6.1.6-4">If none of the values provided in "retry_configs" contains a supported version,
+identify the client in a subsequent ECH handshake.<a href="#section-6.1.6-5" class="pilcrow">¶</a></p>
+<p id="section-6.1.6-6">If none of the values provided in "retry_configs" contains a supported version,
 or an earlier TLS version was negotiated, the client can regard ECH as securely
 disabled by the server, and it SHOULD retry the handshake with a new transport
-connection and ECH disabled.<a href="#section-6.1.6-4" class="pilcrow">¶</a></p>
-<p id="section-6.1.6-5">Clients SHOULD implement a limit on retries caused by receipt of "retry_configs"
+connection and ECH disabled.<a href="#section-6.1.6-6" class="pilcrow">¶</a></p>
+<p id="section-6.1.6-7">Clients SHOULD implement a limit on retries caused by receipt of "retry_configs"
 or servers which do not acknowledge the "encrypted_client_hello" extension. If
 the client does not retry in either scenario, it MUST report an error to the
-calling application.<a href="#section-6.1.6-5" class="pilcrow">¶</a></p>
+calling application.<a href="#section-6.1.6-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="auth-public-name">
