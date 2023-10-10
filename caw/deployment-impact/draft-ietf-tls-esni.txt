@@ -1262,10 +1262,10 @@ Table of Contents
    discussed in Section 8.1.
 
    Beyond coordination difficulties, ECH deployments may also induce
-   challenges for use cases of information that ECH is designed to
-   encrypt.  In particular, use cases which depend on this unencrypted
-   information may no longer work as desired.  This is elaborated upon
-   in Section 8.2.
+   challenges for use cases of information that ECH protects.  In
+   particular, use cases which depend on this unencrypted information
+   may no longer work as desired.  This is elaborated upon in
+   Section 8.2.
 
 8.1.  Compatibility Issues
 
