@@ -5,11 +5,11 @@
 tls                                                          E. Rescorla
 Internet-Draft                                                RTFM, Inc.
 Intended status: Standards Track                                  K. Oku
-Expires: 11 April 2024                                            Fastly
+Expires: 13 April 2024                                            Fastly
                                                              N. Sullivan
                                                               C. A. Wood
                                                               Cloudflare
-                                                          9 October 2023
+                                                         11 October 2023
 
 
                        TLS Encrypted Client Hello
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 April 2024.
+   This Internet-Draft will expire on 13 April 2024.
 
 Copyright Notice
 
@@ -1470,8 +1470,8 @@ Table of Contents
 
 10.6.  Inner ClientHello
 
-   Values which dependent on the contents of ClientHelloInner, such as
-   the true server name, can influence how client-facing servers process
+   Values which depend on the contents of ClientHelloInner, such as the
+   true server name, can influence how client-facing servers process
    this message.  In particular, timing side channels can reveal
    information about the contents of ClientHelloInner.  Implementations
    should take such side channels into consideration when reasoning
