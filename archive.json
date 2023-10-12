@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-10-10T01:02:59.561136+00:00",
+  "timestamp": "2023-10-12T01:01:20.079145+00:00",
   "repo": "tlswg/draft-ietf-tls-esni",
   "labels": [
     {
@@ -11505,7 +11505,7 @@
       "labels": [],
       "body": "Not sure what the right answer is, or whether this belongs in this draft, or some upper layer document. (Alas, though I'm not even sure whether those upper layer documents exist... SVCB? Part of HTTP?) When the recovery flow triggers, we are supposed to \"retry the handshake with a new transport connection\".\r\n\r\nThe transport connection is mostly out of TLS's scope, but _somewhere_ we should decide whether this means...\r\n\r\n* Do you connect with the exact same IP?\r\n* Do you connect with the same SVCB record, but other IPs within that route are in scope?\r\n* Do you connect anew and we just say, meh, this is a recovery mechanism so our aim is just to work most of the time?\r\n* Or maybe we'll learn this is a problem and we need to jam the retry in the same connection (big protocol change, shifts some complexity from upper layers into TLS)\r\n* What happens with proxies, which typically make DNS queries for you? Should we ever decide to integrate SVCB fetching into HTTP CONNECT, the answer here will have implications for that scheme.\r\n\r\nHopefully, with initial experiments, we'll understand this better. But filing this now so we don't forget to address it later.",
       "createdAt": "2022-03-24T18:35:30Z",
-      "updatedAt": "2023-10-09T22:27:20Z",
+      "updatedAt": "2023-10-11T08:40:34Z",
       "closedAt": null,
       "comments": [
         {
@@ -11528,6 +11528,13 @@
           "body": "@davidben I think the most we can say in this document is option (3), which is to say that it's recovery and implementations can do what they want with the guidance to make things work the best they can. It might be helpful to have a higher-level document describing behavior that has emerged in Firefox and Chrome (cc @dennisjackson), but that seems orthogonal and much more involved than what we can probably reasonable accomplish here.",
           "createdAt": "2023-10-09T22:27:20Z",
           "updatedAt": "2023-10-09T22:27:20Z"
+        },
+        {
+          "author": "dennisjackson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I'd prefer to have some 'SHOULD' guidance here for implementers and a pointer to the advice in [draft-ietf-tls-svcb-ech](https://datatracker.ietf.org/doc/draft-ietf-tls-svcb-ech/). It would be good to clarify the interaction between retry ECHConfigs and alternative ECHConfigs+IP hints for example. Something like: \r\n\r\n* When provided with an ECHConfig via a TLS retry extension, you SHOULD use the same IP. \r\n* If the retry fails, follow draft-ietf-tls-svcb-ech (if in use). ",
+          "createdAt": "2023-10-11T08:40:34Z",
+          "updatedAt": "2023-10-11T08:40:34Z"
         }
       ]
     },
@@ -12073,6 +12080,110 @@
           "body": "+1 to a new registry, I'd be even happier if we ditched the concept entirely and left extensibility to only be exercised via the TLS extension code-point; if we're not willing to do that then I'd be moderately happy if we removed the mandatory ECHConfig idea - deploying one of those is really going to be like a new TLS extension code-point so there's no benefit I think\r\n\r\nnote: I expect I'm probably in the rough there but no harm trying:-)\r\n",
           "createdAt": "2023-10-01T19:57:09Z",
           "updatedAt": "2023-10-01T19:57:29Z"
+        }
+      ]
+    },
+    {
+      "number": 565,
+      "id": "I_kwDOB-yxNc5zVg_T",
+      "title": "Requirements language around retry configs may be too strong",
+      "url": "https://github.com/tlswg/draft-ietf-tls-esni/issues/565",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "See [this comment](https://github.com/tlswg/draft-ietf-tls-esni/pull/562/files#r1351063150) and also [this comment](https://github.com/tlswg/draft-ietf-tls-esni/pull/562#discussion_r1351054280).",
+      "createdAt": "2023-10-10T10:35:49Z",
+      "updatedAt": "2023-10-10T10:49:09Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'll address this after #562 lands.",
+          "createdAt": "2023-10-10T10:49:08Z",
+          "updatedAt": "2023-10-10T10:49:08Z"
+        }
+      ]
+    },
+    {
+      "number": 567,
+      "id": "I_kwDOB-yxNc5zYtVW",
+      "title": "Are mandatory ECH extensions deployable?",
+      "url": "https://github.com/tlswg/draft-ietf-tls-esni/issues/567",
+      "state": "OPEN",
+      "author": "sftcd",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "We currently have a way to mark ECH extensions as mandatory via the high-bit of their codepoint.\r\n\r\nI can't see a way in which that's deployable without being the equivalent of cutting a new codepoint for the ECH TLS extension.\r\n\r\nDo we have any outline scenarios that indicate this mandatory ECH extension mechanism is deployable? \r\n\r\nIf not, it may be better to remove it. (I'd be for removing it:-)",
+      "createdAt": "2023-10-10T17:16:19Z",
+      "updatedAt": "2023-10-10T20:35:15Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm not sure what you mean by deployable. The compatibility requirement here is just that clients know to skip over mandatory extensions, just like they need to know to skip over unknown codepoints.\r\n\r\nMandatory extensions are very similar to cutting a new top-level version, yes. That's generally true in any protocols. The main difference is in how to coordinate changes. We could have cut extensions out of TLS entirely and simply bumped the version every time we wanted to extend it. (Extension lists were an IETF innovation. SSL 3.0 did not have them and extended by appending to the ClientHello.) Indeed in a protocol from a single vendor, that is probably a better and simpler extensibility strategy. But in the IETF's multi-vendor protocols, it can be useful for extensions to be defined, implemented, and deployed at different rates. Thus, extension lists, with their various semantics on how to handle unknown ones.\r\n\r\nWhether extending ECH rises to this sort of thing being useful, I don't know. But I don't think the question is deployability, nor is the litmus test _simply_ whether it's equivalent to bumping the top-level version. That litmus test would knock out every extension scheme the IETF has ever produced. :-)",
+          "createdAt": "2023-10-10T18:14:34Z",
+          "updatedAt": "2023-10-10T18:15:18Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The compatibility requirement here is just that clients know to skip over mandatory extensions, just like they need to know to skip over unknown codepoints.\r\n\r\nIs that the case? Doesn't a client need to skip over an entire ECHConfig if it encounters a mandatory extension that it does not support?",
+          "createdAt": "2023-10-10T18:27:27Z",
+          "updatedAt": "2023-10-10T18:27:27Z"
+        },
+        {
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Yes, sorry, sloppy phrasing on my part. I meant skip over the whole ECHConfig.",
+          "createdAt": "2023-10-10T19:20:16Z",
+          "updatedAt": "2023-10-10T19:20:16Z"
+        },
+        {
+          "author": "dennisjackson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I have a **hypothetical** use case for mandatory extensions. Let's call this extension \"Alternative Cover Names\". It contains a list of website names as a payload. If ECH is rejected, the client should authenticate the resulting connection against the cover name or any of the website names in this extension, accepting the retry ECHConfigs if any verification succeeds. This extension needs to be mandatory, because otherwise clients which don't support the extension will only validate against the cover name and won't be able to retrieve retry configs.\r\n\r\nI'd much rather keep the mandatory byte, it allows for a much wider range of experimentation than non-mandatory extensions. ",
+          "createdAt": "2023-10-10T19:23:03Z",
+          "updatedAt": "2023-10-10T19:23:18Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fair enough that it's a hypothetical but won't servers who want to use that need to publish two ECHConfigs one with, and one without, your new ACN extension? So that'd mean they still need to be able to authenticate retry_configs using the public_name from the ECHConfig without ACN, reducing the hypothetical benefit a lot? I guess I'm just skeptical that this'll turn out to be a useful bit (not byte:-) in the ECH extension codepoints,\r\n\r\nWRT experiments, I do think those'd be better done using a different TLS extension codepoint in general, though fair enough that that's not a strong argument.",
+          "createdAt": "2023-10-10T19:29:50Z",
+          "updatedAt": "2023-10-10T19:29:50Z"
+        },
+        {
+          "author": "dennisjackson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "The value of (mandatory) extensions is that you can combine orthogonal ones in way that is tedious with codepoint bumps. I don't want to speculate about how the ecosystem could develop, but I'd rather keep the flexibility to allow folks to find their own use cases. It's a tiny amount of complexity in terms of implementation. ",
+          "createdAt": "2023-10-10T19:35:25Z",
+          "updatedAt": "2023-10-10T19:35:45Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It's true that if we have ECH extensions, the additional code complexity of handling the mandatory bit is tiny. (I'd prefer we just get rid of ECH extensions entirely, but seem to have lost that argument:-)\r\n\r\nOTOH, is there any history of mandatory extensions being successful in IETF protocols? I think the experience with e.g. X.509 criticality shows that at least didn't work, but maybe there's some example somewhere that did, I dunno.",
+          "createdAt": "2023-10-10T20:08:03Z",
+          "updatedAt": "2023-10-10T20:08:03Z"
+        },
+        {
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think the headache with X.509 is only somewhat analogous. The ecosystem around X.509 moves much, much more slowly, and is often deployed in problematic ways. (This thing where servers have a single certificate chain for all clients is such a mess.)\r\n\r\nAnd then protocol-wise, X.509 made criticality a decision you make when you encode the individual field. Sometimes an extension is critical and sometimes it isn't. ECH extensions avoid this and make it part of the codepoint. I.e., it's a decision we make when we _design_ the field.\r\n\r\nWhen we use extension points, we need to reason about what happens when one side is older and the other side is newer. A lot of protocol engineering is trying to get the right thing to happen. Things like critical/mandatory extensions, etc., are tools in our toolbox for getting that right thing to happen. If we're in a context where sometimes we want the older receiver to ignore it, and sometimes we want them to reject it, that's exactly what a mandatory bit is for.\r\n\r\nYou don't see this in TLS only because TLS is a very online protocol, so one side can just say \"I know about this\" and everything flows from there. ECH and X.509 are different because the relevant structures are much more static.",
+          "createdAt": "2023-10-10T20:25:54Z",
+          "updatedAt": "2023-10-10T20:25:54Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Reasonable points, but count me unconvinced. I'll leave it there for now, and I guess if others don't chime in arguing to remove the feature, it'll be ok to close this issue.",
+          "createdAt": "2023-10-10T20:35:15Z",
+          "updatedAt": "2023-10-10T20:35:15Z"
         }
       ]
     }
@@ -51857,7 +51968,7 @@
       "labels": [],
       "body": "Closes #555 \r\n\r\ncc @dennisjackson ",
       "createdAt": "2023-10-09T21:22:06Z",
-      "updatedAt": "2023-10-09T21:22:06Z",
+      "updatedAt": "2023-10-10T17:12:58Z",
       "baseRepository": "tlswg/draft-ietf-tls-esni",
       "baseRefName": "master",
       "baseRefOid": "86c60ecde2179e54f6e2160cf551c72f0c77b9ce",
@@ -51869,7 +51980,160 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5jSSy7",
+          "commit": {
+            "abbreviatedOid": "1ad4c58"
+          },
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-10T01:22:12Z",
+          "updatedAt": "2023-10-10T01:24:14Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "Extremely nitpicky nitpick: I guess it's `ech_config_extension_type` instead of `extension_type` to distinguish from Extension's `extension_type`, but then `extension_data` is still the same. This is a little odd.\r\n\r\nI might suggest we just call them `extension_type` and `extension_data` or perhaps even `type` and `data`. There's no actual requirement that field names be unique.",
+              "createdAt": "2023-10-10T01:22:12Z",
+              "updatedAt": "2023-10-10T01:24:14Z"
+            },
+            {
+              "originalPosition": 43,
+              "body": "Perhaps something like:\r\n\r\n```suggestion\r\nthan one extension of the same type in the extensions block. Unlike TLS extensions, an extension can\r\n```\r\nOtherwise it kind reads like this is carried over from TLS.",
+              "createdAt": "2023-10-10T01:23:18Z",
+              "updatedAt": "2023-10-10T01:24:14Z"
+            },
+            {
+              "originalPosition": 83,
+              "body": "I've never written text that sets up an IANA registry before, so all I can do is skim it and say it seems plausible. :-)",
+              "createdAt": "2023-10-10T01:24:04Z",
+              "updatedAt": "2023-10-10T01:24:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jcSib",
+          "commit": {
+            "abbreviatedOid": "1ad4c58"
+          },
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T16:58:08Z",
+          "updatedAt": "2023-10-10T16:58:08Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "Do we really need this mandatory mechanism? ISTM using it would be the equivalent of changing the TLS extension codepoint for ECH - do we even have a thought-experiment example of how such a \"mandatory\" extension could be deployed and see that work with the current/RFC-to-be TLS extension codepoint for ECH?",
+              "createdAt": "2023-10-10T16:58:08Z",
+              "updatedAt": "2023-10-10T16:58:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jcUkn",
+          "commit": {
+            "abbreviatedOid": "1ad4c58"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T16:59:00Z",
+          "updatedAt": "2023-10-10T16:59:00Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "This is existing text, so we'll keep it as is and track extensions in general separately.",
+              "createdAt": "2023-10-10T16:59:00Z",
+              "updatedAt": "2023-10-10T16:59:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jceZU",
+          "commit": {
+            "abbreviatedOid": "1ad4c58"
+          },
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T17:04:20Z",
+          "updatedAt": "2023-10-10T17:04:20Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "Yes, it's existing text, however I'm quite skeptical that the mechanism will be useful. If we don't even have a thought-experiment indicating it's deployable, then removing the mechanism would seem to me wise.",
+              "createdAt": "2023-10-10T17:04:20Z",
+              "updatedAt": "2023-10-10T17:04:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jcgIp",
+          "commit": {
+            "abbreviatedOid": "1ad4c58"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T17:05:40Z",
+          "updatedAt": "2023-10-10T17:05:40Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "I'm not disagreeing. I'm saying this PR is not the place to discuss the merits of the existing text.",
+              "createdAt": "2023-10-10T17:05:40Z",
+              "updatedAt": "2023-10-10T17:05:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jcg9W",
+          "commit": {
+            "abbreviatedOid": "1ad4c58"
+          },
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T17:06:29Z",
+          "updatedAt": "2023-10-10T17:06:30Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "If my comment is better as some other github artefact (e.g. a new issue or PR) I'm fine creating one.",
+              "createdAt": "2023-10-10T17:06:29Z",
+              "updatedAt": "2023-10-10T17:06:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jck48",
+          "commit": {
+            "abbreviatedOid": "1ad4c58"
+          },
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T17:12:58Z",
+          "updatedAt": "2023-10-10T17:12:58Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "K, I'll create a new issue.",
+              "createdAt": "2023-10-10T17:12:58Z",
+              "updatedAt": "2023-10-10T17:12:58Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 558,
@@ -51883,7 +52147,7 @@
       "labels": [],
       "body": "This doesn't make sense to keep in the final document, so let's remove it.\r\n\r\ncc @dennisjackson, @davidben, @cjpatton ",
       "createdAt": "2023-10-09T21:41:15Z",
-      "updatedAt": "2023-10-09T21:41:15Z",
+      "updatedAt": "2023-10-10T01:20:33Z",
       "baseRepository": "tlswg/draft-ietf-tls-esni",
       "baseRefName": "master",
       "baseRefOid": "86c60ecde2179e54f6e2160cf551c72f0c77b9ce",
@@ -51895,7 +52159,21 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5jSSkm",
+          "commit": {
+            "abbreviatedOid": "8404709"
+          },
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Don't feel strongly whether it goes or stays in, but if you want to remove it, SGTM.",
+          "createdAt": "2023-10-10T01:20:33Z",
+          "updatedAt": "2023-10-10T01:20:33Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 559,
@@ -51909,19 +52187,133 @@
       "labels": [],
       "body": "Closes #400 \r\n\r\nThere may be other ways to spell this, or other places to put it, so please feel free to leave suggestions or propose alternative PRs if desired.\r\n\r\ncc @dennisjackson, @davidben, @cjpatton ",
       "createdAt": "2023-10-09T21:49:31Z",
-      "updatedAt": "2023-10-09T21:49:31Z",
+      "updatedAt": "2023-10-11T12:17:50Z",
       "baseRepository": "tlswg/draft-ietf-tls-esni",
       "baseRefName": "master",
       "baseRefOid": "86c60ecde2179e54f6e2160cf551c72f0c77b9ce",
       "headRepository": "tlswg/draft-ietf-tls-esni",
       "headRefName": "caw/timing-side-channels",
-      "headRefOid": "78d9bbf4e745333c2bc580063a5603cb8df46811",
+      "headRefOid": "a2b72a8ef84c3c1209c310f993187ccd66e43db3",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5jSR2N",
+          "commit": {
+            "abbreviatedOid": "78d9bbf"
+          },
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-10T01:14:43Z",
+          "updatedAt": "2023-10-10T01:14:50Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "https://www.rfc-editor.org/rfc/rfc6919.html#section-2 ;-)",
+              "createdAt": "2023-10-10T01:14:43Z",
+              "updatedAt": "2023-10-10T01:14:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jSR6Y",
+          "commit": {
+            "abbreviatedOid": "78d9bbf"
+          },
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T01:15:11Z",
+          "updatedAt": "2023-10-10T01:15:12Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "(I don't have a suggestion and am not requesting a change. Just amused.)",
+              "createdAt": "2023-10-10T01:15:11Z",
+              "updatedAt": "2023-10-10T01:15:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jSSDe",
+          "commit": {
+            "abbreviatedOid": "78d9bbf"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T01:16:19Z",
+          "updatedAt": "2023-10-10T01:16:19Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "Heh, yeah. I mostly just copied boilerplate language we use in Privacy Pass. \ud83e\udd37",
+              "createdAt": "2023-10-10T01:16:19Z",
+              "updatedAt": "2023-10-10T01:16:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jbd6q",
+          "commit": {
+            "abbreviatedOid": "78d9bbf"
+          },
+          "author": "klinvill",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T15:43:51Z",
+          "updatedAt": "2023-10-10T15:43:51Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "Minor typo:\r\n> Values which _depend_ on ...",
+              "createdAt": "2023-10-10T15:43:51Z",
+              "updatedAt": "2023-10-10T15:43:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jjO2f",
+          "commit": {
+            "abbreviatedOid": "78d9bbf"
+          },
+          "author": "dennisjackson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-11T06:56:13Z",
+          "updatedAt": "2023-10-11T06:56:13Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jmgF7",
+          "commit": {
+            "abbreviatedOid": "78d9bbf"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-11T12:17:46Z",
+          "updatedAt": "2023-10-11T12:17:46Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "```suggestion\r\nValues which depend on the contents of ClientHelloInner, such as the\r\n```",
+              "createdAt": "2023-10-11T12:17:46Z",
+              "updatedAt": "2023-10-11T12:17:47Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 560,
@@ -51935,7 +52327,7 @@
       "labels": [],
       "body": "Closes #519\r\n\r\ncc @klinvill, @davidben, @dennisjackson, @cjpatton ",
       "createdAt": "2023-10-09T21:57:29Z",
-      "updatedAt": "2023-10-09T21:57:29Z",
+      "updatedAt": "2023-10-10T15:37:29Z",
       "baseRepository": "tlswg/draft-ietf-tls-esni",
       "baseRefName": "master",
       "baseRefOid": "86c60ecde2179e54f6e2160cf551c72f0c77b9ce",
@@ -51947,7 +52339,94 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5jSSUN",
+          "commit": {
+            "abbreviatedOid": "a0fe479"
+          },
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T01:18:26Z",
+          "updatedAt": "2023-10-10T01:18:27Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "I'm not sure what you mean by \"how they respond to incoming client connections\". Which certificate you send is arguably how part of \"how they respond\" but presumably we don't mean that! I suppose it could cover other externally-visible implementation choices like division of data into record-layer boundaries. That'd be a pretty solid example... but #519 talks about cipher suite selection, and that's already covered by configurations. So I'm just very confused right now.",
+              "createdAt": "2023-10-10T01:18:26Z",
+              "updatedAt": "2023-10-10T01:18:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jXyvj",
+          "commit": {
+            "abbreviatedOid": "a0fe479"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T10:32:26Z",
+          "updatedAt": "2023-10-10T10:32:26Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "The idea here is that how a server responds, and how that response is visible to the attacker, influences the anonymity set. So on that basis I would consider what certificate they send to be covered here. Note that we don't need to be very rigorous here -- this is just the introduction and the point is to convey the high-level goal of ECH. ",
+              "createdAt": "2023-10-10T10:32:26Z",
+              "updatedAt": "2023-10-10T10:32:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jbS0y",
+          "commit": {
+            "abbreviatedOid": "a0fe479"
+          },
+          "author": "klinvill",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T15:21:43Z",
+          "updatedAt": "2023-10-10T15:34:33Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "The broader point I meant to raise in #519 is that there are several choices servers can make that result in visible differences from the vantage point of an attacker, only some of which I would consider as part of the server's configuration (from an end-user's perspective) while others could end up being implementation differences like David mentions. For example, I would consider which cipher suites a server supports as part of a server's configuration. However, the order that extensions (e.g. key_share, pre_shared_key, supported_versions) appear in the plaintext ServerHello message is not typically a configuration value in the server but may be implementation dependent (since an extension order is not specified in neither the TLS 1.3 nor TLS ECH specs).\r\n\r\nOne could argue that these externally observable behaviors are part of the \"externally visible TLS configurations\", but I would argue that configurations should primarily refer to user-specifiable configurations to be consistent with the mental model I believe most server-providers would have upon reading the spec. I think it is therefore helpful to have additional text that points out that subtle implementation differences beyond user-provided configurations can result in servers being part of smaller anonymity sets than they may initially believe.\r\n\r\nA server's cipher suite preferences could be user-specified, but other implementations may opt for a single static preference which may be incompatible with another implementations preferences. Other distinguishable behavior that I believe is not user-configured but implementation-specific includes choosing to send EncryptedExtensions, CertificateRequest, Certificate, CertificateVerify, and Finished messages as separate records or pack them into a few records (which I believe is a subset of what David is referring to as division of data into record-layer boundaries).",
+              "createdAt": "2023-10-10T15:21:43Z",
+              "updatedAt": "2023-10-10T15:34:33Z"
+            },
+            {
+              "originalPosition": 12,
+              "body": "Given that my main concern is that implementation-specific behavior can result in smaller anonymity sets than a user might believe based on their user-provided configurations, maybe we could rewrite the text to explicitly mention implementation-specific behavior. So the text could be something like:\r\n\r\n> Co-located servers with consistent externally visible TLS configurations and behavior, including supported versions and cipher suites and how they respond to incoming client connections, form an anonymity set. _Note that implementation-specific choices, such as extension ordering within ServerHello and HelloRetryRequest messages or division of data into record-layer boundaries, can result in different externally visible behavior, even when servers run using the same user-provided TLS configurations._ Usage of this mechanism reveals that a client is connecting to a particular service provider, but does not reveal which server from the anonymity set terminates the connection.",
+              "createdAt": "2023-10-10T15:32:55Z",
+              "updatedAt": "2023-10-10T15:34:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jbaw8",
+          "commit": {
+            "abbreviatedOid": "a0fe479"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T15:37:29Z",
+          "updatedAt": "2023-10-10T15:37:29Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "As above, I don't think we need to be rigorous or precise here. This suggestion is a lot more text than I think is warranted for this small point.  That said... @davidben, does this additional text clarify your confusion?",
+              "createdAt": "2023-10-10T15:37:29Z",
+              "updatedAt": "2023-10-10T15:45:31Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 561,
@@ -51961,7 +52440,7 @@
       "labels": [],
       "body": "Closes #512\r\n\r\nThe idea here is that some real and fake ECH differentiator mitigations may require different implementations to agree on how things are done, which is out of scope. This PR also cleans up some text in the Do Not Stick Out section.\r\n\r\ncc @dennisjackson, @davidben, @cjpatton ",
       "createdAt": "2023-10-09T22:09:58Z",
-      "updatedAt": "2023-10-09T22:10:59Z",
+      "updatedAt": "2023-10-10T10:33:50Z",
       "baseRepository": "tlswg/draft-ietf-tls-esni",
       "baseRefName": "master",
       "baseRefOid": "86c60ecde2179e54f6e2160cf551c72f0c77b9ce",
@@ -51973,7 +52452,48 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5jSTfI",
+          "commit": {
+            "abbreviatedOid": "dddc10e"
+          },
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T01:27:13Z",
+          "updatedAt": "2023-10-10T01:27:13Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "This is a little interesting. The length of the ECH ciphertext only matches if the implementation accurately simulates things. The length of the encrypted certificate only matches if implementation applies the same padding between the two cases.\r\n\r\nNot sure how best to phrase this. It's not out-of-scope per se in that we don't completely ignore it. But we also can't claim they were designed not to not vary without any qualifications.",
+              "createdAt": "2023-10-10T01:27:13Z",
+              "updatedAt": "2023-10-10T01:27:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jXz9r",
+          "commit": {
+            "abbreviatedOid": "dddc10e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T10:33:49Z",
+          "updatedAt": "2023-10-10T10:33:50Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "This is existing text (just formatted differently), so I'd be inclined to address that in a followup PR or do nothing.",
+              "createdAt": "2023-10-10T10:33:49Z",
+              "updatedAt": "2023-10-10T10:33:50Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 562,
@@ -51987,13 +52507,13 @@
       "labels": [],
       "body": "Closes #524 \r\n\r\nAs always, happy to take suggestions or alternative PRs.\r\n\r\ncc @dennisjackson, @davidben, @martinthomson ",
       "createdAt": "2023-10-09T22:30:34Z",
-      "updatedAt": "2023-10-10T00:44:36Z",
+      "updatedAt": "2023-10-10T10:36:03Z",
       "baseRepository": "tlswg/draft-ietf-tls-esni",
       "baseRefName": "master",
       "baseRefOid": "86c60ecde2179e54f6e2160cf551c72f0c77b9ce",
       "headRepository": "tlswg/draft-ietf-tls-esni",
       "headRefName": "caw/new-transport-punt",
-      "headRefOid": "eb3ee35f2c0ab36c43afbeeb7f2536ddc45f5fe2",
+      "headRefOid": "0a97d054199c463a42258fc2caa3768d03547582",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -52037,6 +52557,46 @@
               "updatedAt": "2023-10-10T00:44:36Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jX1At",
+          "commit": {
+            "abbreviatedOid": "e64796a"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T10:34:59Z",
+          "updatedAt": "2023-10-10T10:35:00Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "```suggestion\r\nserver.\r\n\r\nClients can implement a new transport connection in a way that best\r\nsuits their deployment. For example, clients can reuse the same IP address\r\nwhen establishing the new transport connection or they can choose to use a\r\ndifferent IP address if provided with options from DNS. ECH does not mandate\r\nany specific implementation choices when establishing this new connection.\r\n\r\n```",
+              "createdAt": "2023-10-10T10:34:59Z",
+              "updatedAt": "2023-10-10T10:35:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jX12d",
+          "commit": {
+            "abbreviatedOid": "0a97d05"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T10:36:02Z",
+          "updatedAt": "2023-10-10T10:36:03Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "Indeed -- unrelated, since this is existing text. I filed [this issue](https://github.com/tlswg/draft-ietf-tls-esni/issues/565) to track resolution separately.",
+              "createdAt": "2023-10-10T10:36:03Z",
+              "updatedAt": "2023-10-10T10:36:03Z"
+            }
+          ]
         }
       ]
     },
@@ -52052,7 +52612,7 @@
       "labels": [],
       "body": "Closes #551 \r\n\r\nI realize that QUIC, being a transport that inlines TLS, would not immediately apply here, but I think the intent is generic enough to not be confusing or misleading. Plus, this was literally the only place we used \"TCP,\" whereas elsewhere we use \"transport connection,\" so this is also for consistency.\r\n\r\ncc @dennisjackson, @davidben, @cjpatton ",
       "createdAt": "2023-10-09T22:33:21Z",
-      "updatedAt": "2023-10-09T22:33:21Z",
+      "updatedAt": "2023-10-10T21:01:53Z",
       "baseRepository": "tlswg/draft-ietf-tls-esni",
       "baseRefName": "master",
       "baseRefOid": "86c60ecde2179e54f6e2160cf551c72f0c77b9ce",
@@ -52064,7 +52624,47 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5jSRtQ",
+          "commit": {
+            "abbreviatedOid": "9173bc3"
+          },
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-10T01:13:35Z",
+          "updatedAt": "2023-10-10T01:13:35Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jcls4",
+          "commit": {
+            "abbreviatedOid": "9173bc3"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-10T17:15:01Z",
+          "updatedAt": "2023-10-10T17:15:01Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jesda",
+          "commit": {
+            "abbreviatedOid": "9173bc3"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-10T21:01:53Z",
+          "updatedAt": "2023-10-10T21:01:53Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 564,
@@ -52078,19 +52678,155 @@
       "labels": [],
       "body": "Closes #513 \r\n\r\nThe intent here is to punt entirely on the mechanism by which messages between client-facing and backend servers are protected in transit, and simply to state the assumption that these messages do not let the attacker trivially learn information that ECH otherwise protects via encryption. Suggestions for further clarifications are welcome!\r\n\r\ncc @dennisjackson, @davidben, @cjpatton ",
       "createdAt": "2023-10-09T23:06:00Z",
-      "updatedAt": "2023-10-09T23:26:09Z",
+      "updatedAt": "2023-10-11T12:18:21Z",
       "baseRepository": "tlswg/draft-ietf-tls-esni",
       "baseRefName": "master",
       "baseRefOid": "86c60ecde2179e54f6e2160cf551c72f0c77b9ce",
       "headRepository": "tlswg/draft-ietf-tls-esni",
       "headRefName": "caw/clarify-network-capabilities",
-      "headRefOid": "218f6b830dc4cb5afc03c367a9e66c4c4649467f",
+      "headRefOid": "40a4761695c0bf7ee49e4da5f36747b432a7d2ff",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "comments": [
+        {
+          "author": "dennisjackson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "LGTM ",
+          "createdAt": "2023-10-11T06:48:15Z",
+          "updatedAt": "2023-10-11T06:48:15Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5jgXP4",
+          "commit": {
+            "abbreviatedOid": "218f6b8"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "Looks good but I want to double check that this actually resolve the issue before approving. One minor suggestion on wording.",
+          "createdAt": "2023-10-11T00:28:17Z",
+          "updatedAt": "2023-10-11T00:32:49Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "```suggestion\r\n1. The channel between each client-facing and each backend server is authenticated\r\n```",
+              "createdAt": "2023-10-11T00:28:17Z",
+              "updatedAt": "2023-10-11T00:32:49Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 566,
+      "id": "PR_kwDOB-yxNc5cXhya",
+      "title": "Add text describing deployment impacts of no SNI access",
+      "url": "https://github.com/tlswg/draft-ietf-tls-esni/pull/566",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This lifts text from the ECH deployment considerations draft for inclusion in the ECH draft. It is not uncommon for protocol documents to address deployment considerations head on, and this PR attempts to do so. As always, feedback on the exact phrasing is welcome.\r\n\r\ncc @dennisjackson, @davidben, @martinthomson, @cjpatton, @sftcd",
+      "createdAt": "2023-10-10T10:47:18Z",
+      "updatedAt": "2023-10-11T06:54:43Z",
+      "baseRepository": "tlswg/draft-ietf-tls-esni",
+      "baseRefName": "master",
+      "baseRefOid": "86c60ecde2179e54f6e2160cf551c72f0c77b9ce",
+      "headRepository": "tlswg/draft-ietf-tls-esni",
+      "headRefName": "caw/deployment-impact",
+      "headRefOid": "e4a9dead6a35a7d9cadb0cb4c509d3013ba115ee",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "dennisjackson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "LGTM. Do you want to add something about untrusted environments? e.g. \r\n\r\n\"In an environment where the network operator controls the endpoint devices, but is concerned about malware or similar exfiltrating data, the SNI field is unsuitable for use as a control even in the absence of ECH. This is because malware is able to spoof the value in an SNI field already, and can even fool security appliances which try to 'double-check' the websites hosted by the target server. ECH does not materially change this situation.\"   ",
+          "createdAt": "2023-10-11T06:54:43Z",
+          "updatedAt": "2023-10-11T06:54:43Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5jbj3R",
+          "commit": {
+            "abbreviatedOid": "4627bb5"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-10T15:54:48Z",
+          "updatedAt": "2023-10-10T15:57:35Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "```suggestion\r\nfor use cases of information that ECH protects. In particular,\r\n```",
+              "createdAt": "2023-10-10T15:54:48Z",
+              "updatedAt": "2023-10-10T15:57:35Z"
+            },
+            {
+              "originalPosition": 60,
+              "body": "```suggestion\r\nimplementations will fall back to TLS without ECH in the event of disablement.\r\n```",
+              "createdAt": "2023-10-10T15:56:45Z",
+              "updatedAt": "2023-10-10T15:57:35Z"
+            },
+            {
+              "originalPosition": 66,
+              "body": "It might be worth suggesting how to disable ECH here. (Toggle in DNS?)",
+              "createdAt": "2023-10-10T15:57:32Z",
+              "updatedAt": "2023-10-10T15:57:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jeBbs",
+          "commit": {
+            "abbreviatedOid": "4627bb5"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-10T20:20:49Z",
+          "updatedAt": "2023-10-10T20:20:49Z",
+          "comments": [
+            {
+              "originalPosition": 66,
+              "body": "We could offer that as an example, yeah. ",
+              "createdAt": "2023-10-10T20:20:49Z",
+              "updatedAt": "2023-10-10T20:20:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5jjM_O",
+          "commit": {
+            "abbreviatedOid": "e4a9dea"
+          },
+          "author": "dennisjackson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-11T06:51:12Z",
+          "updatedAt": "2023-10-11T06:51:12Z",
+          "comments": [
+            {
+              "originalPosition": 66,
+              "body": "I don't think we should point people to unauthenticated DNS toggles if we can help it. Perhaps just \"disable ECH entirely via group policy\"? ",
+              "createdAt": "2023-10-11T06:51:12Z",
+              "updatedAt": "2023-10-11T06:51:12Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
