@@ -13,24 +13,24 @@
        This document describes a mechanism in Transport Layer Security (TLS) for
 encrypting a ClientHello message under a server public key. 
     " name="description">
-<meta content="xml2rfc 3.18.0" name="generator">
+<meta content="xml2rfc 3.18.1" name="generator">
 <meta content="Internet-Draft" name="keyword">
 <meta content="draft-ietf-tls-esni-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.18.0
+  xml2rfc 3.18.1
     Python 3.11.5
     ConfigArgParse 1.5.3
     google-i18n-address 3.1.0
     intervaltree 3.1.0
     Jinja2 3.1.2
     lxml 4.9.3
-    platformdirs 3.10.0
+    platformdirs 3.11.0
     pycountry 22.3.5
     PyYAML 6.0
     requests 2.31.0
     setuptools 67.7.2
     six 1.16.0
-    wcwidth 0.2.6
+    wcwidth 0.2.8
 -->
 <link href="draft-ietf-tls-esni.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -653,7 +653,7 @@ sub, sup {
 }
 #toc nav li {
   line-height: 1.3em;
-  margin: 0.75em 0;
+  margin: 2px 0;
   padding-left: 1.2em;
   text-indent: -1.2em;
 }
@@ -746,7 +746,7 @@ hr.addr {
     z-index: 2;
     top: 0;
     right: 0;
-    padding: 0;
+    padding: 1px 0 0 0;
     margin: 0;
     border-bottom: 1px solid #ccc;
     opacity: 0.6;
@@ -870,16 +870,13 @@ hr.addr {
     border-top: none;
     padding-top: 0;
   }
-  figure, pre {
+  figure, pre, .vcard {
     page-break-inside: avoid;
-  }
-  figure {
-    overflow: scroll;
   }
   h1, h2, h3, h4, h5, h6 {
     page-break-after: avoid;
   }
-  h2+*, h3+*, h4+*, h5+*, h6+* {
+  :is(h2, h3, h4, h5, h6)+*, dd {
     page-break-before: avoid;
   }
   pre {
@@ -892,6 +889,9 @@ hr.addr {
   }
   td {
     border-top: 1px solid #ddd;
+  }
+  .toplink {
+    display: none;
   }
 }
 
@@ -993,28 +993,6 @@ address div.right {
   text-align: right;
 }
 
-/* Give the table caption label the same styling as the figcaption */
-
-@media print {
-  .toplink {
-    display: none;
-  }
-
-  /* avoid overwriting the top border line with the ToC header */
-  #toc {
-    padding-top: 1px;
-  }
-
-  /* Avoid page breaks inside dl and author address entries */
-  dd {
-    page-break-before: avoid;
-  }
-  .vcard {
-    page-break-inside: avoid;
-  }
-
-}
-
 /* Dark mode. */
 @media (prefers-color-scheme: dark) {
 :root {
@@ -1051,11 +1029,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">TLS Encrypted Client Hello</td>
-<td class="right">September 2023</td>
+<td class="right">October 2023</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Rescorla, et al.</td>
-<td class="center">Expires 23 March 2024</td>
+<td class="center">Expires 14 April 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1046,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-tls-esni-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2023-09-20" class="published">20 September 2023</time>
+<time datetime="2023-10-12" class="published">12 October 2023</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-03-23">23 March 2024</time></dd>
+<dd class="expires"><time datetime="2024-04-14">14 April 2024</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1128,7 +1106,7 @@ encrypting a ClientHello message under a server public key.<a href="#section-abs
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 23 March 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 14 April 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1563,12 +1541,14 @@ sensitive extensions and an "encrypted_client_hello" extension
 Finally, the client sends ClientHelloOuter to the server.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
 <p id="section-3.2-3">The server takes one of the following actions:<a href="#section-3.2-3" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3.2-4">
-<li id="section-3.2-4.1">If it does not support ECH or cannot decrypt the extension, it completes
-the handshake with ClientHelloOuter. This is referred to as rejecting ECH.<a href="#section-3.2-4.1" class="pilcrow">¶</a>
+<li id="section-3.2-4.1">
+            <p id="section-3.2-4.1.1">If it does not support ECH or cannot decrypt the extension, it completes
+the handshake with ClientHelloOuter. This is referred to as rejecting ECH.<a href="#section-3.2-4.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-3.2-4.2">If it successfully decrypts the extension, it forwards the ClientHelloInner
+          <li id="section-3.2-4.2">
+            <p id="section-3.2-4.2.1">If it successfully decrypts the extension, it forwards the ClientHelloInner
 to the backend server, which completes the handshake. This is referred to
-as accepting ECH.<a href="#section-3.2-4.2" class="pilcrow">¶</a>
+as accepting ECH.<a href="#section-3.2-4.2.1" class="pilcrow">¶</a></p>
 </li>
         </ol>
 <p id="section-3.2-5">Upon receiving the server's response, the client determines whether or not ECH
@@ -1946,14 +1926,18 @@ corresponding sequence of extensions in the ClientHelloOuter. The server MUST
 abort the connection with an "illegal_parameter" alert if any of the following
 are true:<a href="#section-5.1-10" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1-11.1">Any referenced extension is missing in ClientHelloOuter.<a href="#section-5.1-11.1" class="pilcrow">¶</a>
+<li class="normal" id="section-5.1-11.1">
+            <p id="section-5.1-11.1.1">Any referenced extension is missing in ClientHelloOuter.<a href="#section-5.1-11.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-5.1-11.2">Any extension is referenced in OuterExtensions more than once.<a href="#section-5.1-11.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-5.1-11.2">
+            <p id="section-5.1-11.2.1">Any extension is referenced in OuterExtensions more than once.<a href="#section-5.1-11.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-5.1-11.3">"encrypted_client_hello" is referenced in OuterExtensions.<a href="#section-5.1-11.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-5.1-11.3">
+            <p id="section-5.1-11.3.1">"encrypted_client_hello" is referenced in OuterExtensions.<a href="#section-5.1-11.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-5.1-11.4">The extensions in ClientHelloOuter corresponding to those in OuterExtensions
-do not occur in the same order.<a href="#section-5.1-11.4" class="pilcrow">¶</a>
+          <li class="normal" id="section-5.1-11.4">
+            <p id="section-5.1-11.4.1">The extensions in ClientHelloOuter corresponding to those in OuterExtensions
+do not occur in the same order.<a href="#section-5.1-11.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-5.1-12">These requirements prevent an attacker from performing a packet amplification
@@ -2024,19 +2008,23 @@ SHOULD proceed as described in <a href="#grease-ech" class="auto internal xref">
 <p id="section-6.1-2">Next, the client constructs the ClientHelloInner message just as it does a
 standard ClientHello, with the exception of the following rules:<a href="#section-6.1-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-6.1-3">
-<li id="section-6.1-3.1">It MUST NOT offer to negotiate TLS 1.2 or below. This is necessary to ensure
+<li id="section-6.1-3.1">
+            <p id="section-6.1-3.1.1">It MUST NOT offer to negotiate TLS 1.2 or below. This is necessary to ensure
 the backend server does not negotiate a TLS version that is incompatible with
-ECH.<a href="#section-6.1-3.1" class="pilcrow">¶</a>
+ECH.<a href="#section-6.1-3.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-6.1-3.2">It MUST NOT offer to resume any session for TLS 1.2 and below.<a href="#section-6.1-3.2" class="pilcrow">¶</a>
+          <li id="section-6.1-3.2">
+            <p id="section-6.1-3.2.1">It MUST NOT offer to resume any session for TLS 1.2 and below.<a href="#section-6.1-3.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-6.1-3.3">If it intends to compress any extensions (see <a href="#encoding-inner" class="auto internal xref">Section 5.1</a>), it MUST
-order those extensions consecutively.<a href="#section-6.1-3.3" class="pilcrow">¶</a>
+          <li id="section-6.1-3.3">
+            <p id="section-6.1-3.3.1">If it intends to compress any extensions (see <a href="#encoding-inner" class="auto internal xref">Section 5.1</a>), it MUST
+order those extensions consecutively.<a href="#section-6.1-3.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-6.1-3.4">It MUST include the "encrypted_client_hello" extension of type <code>inner</code> as
+          <li id="section-6.1-3.4">
+            <p id="section-6.1-3.4.1">It MUST include the "encrypted_client_hello" extension of type <code>inner</code> as
 described in <a href="#encrypted-client-hello" class="auto internal xref">Section 5</a>. (This requirement is not applicable
 when the "encrypted_client_hello" extension is generated as described in
-<a href="#grease-ech" class="auto internal xref">Section 6.2</a>.)<a href="#section-6.1-3.4" class="pilcrow">¶</a>
+<a href="#grease-ech" class="auto internal xref">Section 6.2</a>.)<a href="#section-6.1-3.4.1" class="pilcrow">¶</a></p>
 </li>
         </ol>
 <p id="section-6.1-4">The client then constructs EncodedClientHelloInner as described in
@@ -2052,36 +2040,43 @@ as:<a href="#section-6.1-4" class="pilcrow">¶</a></p>
 <p id="section-6.1-6">Next, it constructs a partial ClientHelloOuterAAD as it does a standard
 ClientHello, with the exception of the following rules:<a href="#section-6.1-6" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-6.1-7">
-<li id="section-6.1-7.1">It MUST offer to negotiate TLS 1.3 or above.<a href="#section-6.1-7.1" class="pilcrow">¶</a>
+<li id="section-6.1-7.1">
+            <p id="section-6.1-7.1.1">It MUST offer to negotiate TLS 1.3 or above.<a href="#section-6.1-7.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-6.1-7.2">If it compressed any extensions in EncodedClientHelloInner, it MUST copy the
+          <li id="section-6.1-7.2">
+            <p id="section-6.1-7.2.1">If it compressed any extensions in EncodedClientHelloInner, it MUST copy the
 corresponding extensions from ClientHelloInner. The copied extensions
-additionally MUST be in the same relative order as in ClientHelloInner.<a href="#section-6.1-7.2" class="pilcrow">¶</a>
+additionally MUST be in the same relative order as in ClientHelloInner.<a href="#section-6.1-7.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-6.1-7.3">It MUST copy the legacy_session_id field from ClientHelloInner. This
+          <li id="section-6.1-7.3">
+            <p id="section-6.1-7.3.1">It MUST copy the legacy_session_id field from ClientHelloInner. This
 allows the server to echo the correct session ID for TLS 1.3's compatibility
-mode (see Appendix D.4 of <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>) when ECH is negotiated.<a href="#section-6.1-7.3" class="pilcrow">¶</a>
+mode (see Appendix D.4 of <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>) when ECH is negotiated.<a href="#section-6.1-7.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-6.1-7.4">It MAY copy any other field from the ClientHelloInner except
+          <li id="section-6.1-7.4">
+            <p id="section-6.1-7.4.1">It MAY copy any other field from the ClientHelloInner except
 ClientHelloInner.random. Instead, It MUST generate a fresh
 ClientHelloOuter.random using a secure random number generator. (See
-<a href="#flow-client-reaction" class="auto internal xref">Section 10.11.1</a>.)<a href="#section-6.1-7.4" class="pilcrow">¶</a>
+<a href="#flow-client-reaction" class="auto internal xref">Section 10.11.1</a>.)<a href="#section-6.1-7.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-6.1-7.5">The value of <code>ECHConfig.contents.public_name</code> MUST be placed in the
-"server_name" extension.<a href="#section-6.1-7.5" class="pilcrow">¶</a>
+          <li id="section-6.1-7.5">
+            <p id="section-6.1-7.5.1">The value of <code>ECHConfig.contents.public_name</code> MUST be placed in the
+"server_name" extension.<a href="#section-6.1-7.5.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-6.1-7.6">When the client offers the "pre_shared_key" extension in ClientHelloInner, it
+          <li id="section-6.1-7.6">
+            <p id="section-6.1-7.6.1">When the client offers the "pre_shared_key" extension in ClientHelloInner, it
 SHOULD also include a GREASE "pre_shared_key" extension in ClientHelloOuter,
 generated in the manner described in <a href="#grease-psk" class="auto internal xref">Section 6.1.2</a>. The client MUST NOT use
 this extension to advertise a PSK to the client-facing server. (See
 <a href="#flow-clienthello-malleability" class="auto internal xref">Section 10.11.3</a>.) When the client includes a GREASE
 "pre_shared_key" extension, it MUST also copy the "psk_key_exchange_modes"
-from the ClientHelloInner into the ClientHelloOuter.<a href="#section-6.1-7.6" class="pilcrow">¶</a>
+from the ClientHelloInner into the ClientHelloOuter.<a href="#section-6.1-7.6.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-6.1-7.7">When the client offers the "early_data" extension in ClientHelloInner, it
+          <li id="section-6.1-7.7">
+            <p id="section-6.1-7.7.1">When the client offers the "early_data" extension in ClientHelloInner, it
 MUST also include the "early_data" extension in ClientHelloOuter. This
 allows servers that reject ECH and use ClientHelloOuter to safely ignore any
-early data sent by the client per <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>], <a href="https://rfc-editor.org/rfc/rfc8446#section-4.2.10" class="relref">Section 4.2.10</a></span>.<a href="#section-6.1-7.7" class="pilcrow">¶</a>
+early data sent by the client per <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>], <a href="https://rfc-editor.org/rfc/rfc8446#section-4.2.10" class="relref">Section 4.2.10</a></span>.<a href="#section-6.1-7.7.1" class="pilcrow">¶</a></p>
 </li>
         </ol>
 <p id="section-6.1-8">Note that these rules may change in the presence of an application profile
@@ -2109,16 +2104,16 @@ an "encrypted_client_hello" extension. This extension value contains the outer
 variant of ECHClientHello with the following fields:<a href="#section-6.1.1-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.1.1-3.1">
-              <code>config_id</code>, the identifier corresponding to the chosen ECHConfig structure;<a href="#section-6.1.1-3.1" class="pilcrow">¶</a>
+              <p id="section-6.1.1-3.1.1"><code>config_id</code>, the identifier corresponding to the chosen ECHConfig structure;<a href="#section-6.1.1-3.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-6.1.1-3.2">
-              <code>cipher_suite</code>, the client's chosen cipher suite;<a href="#section-6.1.1-3.2" class="pilcrow">¶</a>
+              <p id="section-6.1.1-3.2.1"><code>cipher_suite</code>, the client's chosen cipher suite;<a href="#section-6.1.1-3.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-6.1.1-3.3">
-              <code>enc</code>, as given above; and<a href="#section-6.1.1-3.3" class="pilcrow">¶</a>
+              <p id="section-6.1.1-3.3.1"><code>enc</code>, as given above; and<a href="#section-6.1.1-3.3.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-6.1.1-3.4">
-              <code>payload</code>, a placeholder byte string containing L zeros.<a href="#section-6.1.1-3.4" class="pilcrow">¶</a>
+              <p id="section-6.1.1-3.4.1"><code>payload</code>, a placeholder byte string containing L zeros.<a href="#section-6.1.1-3.4.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-6.1.1-4">If configuration identifiers (see <a href="#ignored-configs" class="auto internal xref">Section 10.4</a>) are to be ignored,
@@ -2189,20 +2184,24 @@ server's anonymity set without server input. Clients SHOULD use the ECHConfig's
 <code>maximum_name_length</code> field as follows, where L is the <code>maximum_name_length</code>
 value.<a href="#section-6.1.3-3" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-6.1.3-4">
-<li id="section-6.1.3-4.1">If the ClientHelloInner contained a "server_name" extension with a name of
-length D, add max(0, L - D) bytes of padding.<a href="#section-6.1.3-4.1" class="pilcrow">¶</a>
+<li id="section-6.1.3-4.1">
+              <p id="section-6.1.3-4.1.1">If the ClientHelloInner contained a "server_name" extension with a name of
+length D, add max(0, L - D) bytes of padding.<a href="#section-6.1.3-4.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-6.1.3-4.2">If the ClientHelloInner did not contain a "server_name" extension (e.g., if
+            <li id="section-6.1.3-4.2">
+              <p id="section-6.1.3-4.2.1">If the ClientHelloInner did not contain a "server_name" extension (e.g., if
 the client is connecting to an IP address), add L + 9 bytes of padding. This
-is the length of a "server_name" extension with an L-byte name.<a href="#section-6.1.3-4.2" class="pilcrow">¶</a>
+is the length of a "server_name" extension with an L-byte name.<a href="#section-6.1.3-4.2.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 <p id="section-6.1.3-5">Finally, the client SHOULD pad the entire message as follows:<a href="#section-6.1.3-5" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-6.1.3-6">
-<li id="section-6.1.3-6.1">Let L be the length of the EncodedClientHelloInner with all the padding
-computed so far.<a href="#section-6.1.3-6.1" class="pilcrow">¶</a>
+<li id="section-6.1.3-6.1">
+              <p id="section-6.1.3-6.1.1">Let L be the length of the EncodedClientHelloInner with all the padding
+computed so far.<a href="#section-6.1.3-6.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-6.1.3-6.2">Let N = 31 - ((L - 1) % 32) and add N bytes of padding.<a href="#section-6.1.3-6.2" class="pilcrow">¶</a>
+            <li id="section-6.1.3-6.2">
+              <p id="section-6.1.3-6.2.1">Let N = 31 - ((L - 1) % 32) and add N bytes of padding.<a href="#section-6.1.3-6.2.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 <p id="section-6.1.3-7">This rounds the length of EncodedClientHelloInner up to a multiple of 32 bytes,
@@ -2257,16 +2256,19 @@ ClientHelloInner as the first ClientHello.<a href="#section-6.1.5-2" class="pilc
 <p id="section-6.1.5-3">If the server responds with a HelloRetryRequest, the client computes the updated
 ClientHello message as follows:<a href="#section-6.1.5-3" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-6.1.5-4">
-<li id="section-6.1.5-4.1">It computes a second ClientHelloInner based on the first ClientHelloInner, as
+<li id="section-6.1.5-4.1">
+              <p id="section-6.1.5-4.1.1">It computes a second ClientHelloInner based on the first ClientHelloInner, as
 in <span><a href="https://rfc-editor.org/rfc/rfc8446#section-4.1.4" class="relref">Section 4.1.4</a> of [<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>. The ClientHelloInner's
-"encrypted_client_hello" extension is left unmodified.<a href="#section-6.1.5-4.1" class="pilcrow">¶</a>
+"encrypted_client_hello" extension is left unmodified.<a href="#section-6.1.5-4.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-6.1.5-4.2">It constructs EncodedClientHelloInner as described in <a href="#encoding-inner" class="auto internal xref">Section 5.1</a>.<a href="#section-6.1.5-4.2" class="pilcrow">¶</a>
+            <li id="section-6.1.5-4.2">
+              <p id="section-6.1.5-4.2.1">It constructs EncodedClientHelloInner as described in <a href="#encoding-inner" class="auto internal xref">Section 5.1</a>.<a href="#section-6.1.5-4.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-6.1.5-4.3">It constructs a second partial ClientHelloOuterAAD message. This message MUST
+            <li id="section-6.1.5-4.3">
+              <p id="section-6.1.5-4.3.1">It constructs a second partial ClientHelloOuterAAD message. This message MUST
 be syntactically valid. The extensions MAY be copied from the original
 ClientHelloOuter unmodified, or omitted. If not sensitive, the client MAY
-copy updated extensions from the second ClientHelloInner for compression.<a href="#section-6.1.5-4.3" class="pilcrow">¶</a>
+copy updated extensions from the second ClientHelloInner for compression.<a href="#section-6.1.5-4.3.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-6.1.5-4.4">
               <p id="section-6.1.5-4.4.1">It encrypts EncodedClientHelloInner as described in
@@ -2334,12 +2336,14 @@ calling application.<a href="#section-6.1.6-5" class="pilcrow">¶</a></p>
 "server_name" extension instead (see <a href="#server-behavior" class="auto internal xref">Section 7</a>). Clients that offer
 ECH then authenticate the connection with the public name, as follows:<a href="#section-6.1.7-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-6.1.7-2.1">The client MUST verify that the certificate is valid for
+<li class="normal" id="section-6.1.7-2.1">
+              <p id="section-6.1.7-2.1.1">The client MUST verify that the certificate is valid for
 ECHConfig.contents.public_name. If invalid, it MUST abort the connection with
-the appropriate alert.<a href="#section-6.1.7-2.1" class="pilcrow">¶</a>
+the appropriate alert.<a href="#section-6.1.7-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-6.1.7-2.2">If the server requests a client certificate, the client MUST respond with an
-empty Certificate message, denoting no client certificate.<a href="#section-6.1.7-2.2" class="pilcrow">¶</a>
+            <li class="normal" id="section-6.1.7-2.2">
+              <p id="section-6.1.7-2.2.1">If the server requests a client certificate, the client MUST respond with an
+empty Certificate message, denoting no client certificate.<a href="#section-6.1.7-2.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-6.1.7-3">In verifying the client-facing server certificate, the client MUST interpret
@@ -2367,20 +2371,24 @@ instance, by reporting a failed connection with a dedicated error code.<a href="
 structure available for the server, it SHOULD send a GREASE <span>[<a href="#RFC8701" class="cite xref">RFC8701</a>]</span>
 "encrypted_client_hello" extension in the first ClientHello as follows:<a href="#section-6.2-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-6.2-2.1">Set the <code>config_id</code> field to a random byte.<a href="#section-6.2-2.1" class="pilcrow">¶</a>
+<li class="normal" id="section-6.2-2.1">
+            <p id="section-6.2-2.1.1">Set the <code>config_id</code> field to a random byte.<a href="#section-6.2-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-6.2-2.2">Set the <code>cipher_suite</code> field to a supported HpkeSymmetricCipherSuite. The
+          <li class="normal" id="section-6.2-2.2">
+            <p id="section-6.2-2.2.1">Set the <code>cipher_suite</code> field to a supported HpkeSymmetricCipherSuite. The
 selection SHOULD vary to exercise all supported configurations, but MAY be
 held constant for successive connections to the same server in the same
-session.<a href="#section-6.2-2.2" class="pilcrow">¶</a>
+session.<a href="#section-6.2-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-6.2-2.3">Set the <code>enc</code> field to a randomly-generated valid encapsulated public key
-output by the HPKE KEM.<a href="#section-6.2-2.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-6.2-2.3">
+            <p id="section-6.2-2.3.1">Set the <code>enc</code> field to a randomly-generated valid encapsulated public key
+output by the HPKE KEM.<a href="#section-6.2-2.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-6.2-2.4">Set the <code>payload</code> field to a randomly-generated string of L+C bytes, where C
+          <li class="normal" id="section-6.2-2.4">
+            <p id="section-6.2-2.4.1">Set the <code>payload</code> field to a randomly-generated string of L+C bytes, where C
 is the ciphertext expansion of the selected AEAD scheme and L is the size of
 the EncodedClientHelloInner the client would compute when offering ECH, padded
-according to <a href="#padding" class="auto internal xref">Section 6.1.3</a>.<a href="#section-6.2-2.4" class="pilcrow">¶</a>
+according to <a href="#padding" class="auto internal xref">Section 6.1.3</a>.<a href="#section-6.2-2.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-6.2-3">If sending a second ClientHello in response to a HelloRetryRequest, the
@@ -2391,8 +2399,8 @@ HelloRetryRequest.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
 <p id="section-6.2-4">If the server sends an "encrypted_client_hello" extension in either
 HelloRetryRequest or EncryptedExtensions, the client MUST check the extension
 syntactically and abort the connection with a "decode_error" alert if it is
-invalid. It otherwise ignores the extension. It MUST NOT save the "retry_config"
-value in EncryptedExtensions.<a href="#section-6.2-4" class="pilcrow">¶</a></p>
+invalid. It otherwise ignores the extension. It MUST NOT save the
+"retry_configs" value in EncryptedExtensions.<a href="#section-6.2-4" class="pilcrow">¶</a></p>
 <p id="section-6.2-5">Offering a GREASE extension is not considered offering an encrypted ClientHello
 for purposes of requirements in <a href="#real-ech" class="auto internal xref">Section 6.1</a>. In particular, the client
 MAY offer to resume sessions established without ECH.<a href="#section-6.2-5" class="pilcrow">¶</a></p>
@@ -2408,15 +2416,18 @@ MAY offer to resume sessions established without ECH.<a href="#section-6.2-5" cl
 <p id="section-7-1">Servers that support ECH play one of two roles, depending on the payload of the
 "encrypted_client_hello" extension in the initial ClientHello:<a href="#section-7-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-7-2.1">If <code>ECHClientHello.type</code> is <code>outer</code>, then the server acts as a client-facing
+<li class="normal" id="section-7-2.1">
+          <p id="section-7-2.1.1">If <code>ECHClientHello.type</code> is <code>outer</code>, then the server acts as a client-facing
 server and proceeds as described in <a href="#client-facing-server" class="auto internal xref">Section 7.1</a> to extract a
-ClientHelloInner, if available.<a href="#section-7-2.1" class="pilcrow">¶</a>
+ClientHelloInner, if available.<a href="#section-7-2.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-7-2.2">If <code>ECHClientHello.type</code> is <code>inner</code>, then the server acts as a backend server
-and proceeds as described in <a href="#backend-server" class="auto internal xref">Section 7.2</a>.<a href="#section-7-2.2" class="pilcrow">¶</a>
+        <li class="normal" id="section-7-2.2">
+          <p id="section-7-2.2.1">If <code>ECHClientHello.type</code> is <code>inner</code>, then the server acts as a backend server
+and proceeds as described in <a href="#backend-server" class="auto internal xref">Section 7.2</a>.<a href="#section-7-2.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-7-2.3">Otherwise, if <code>ECHClientHello.type</code> is not a valid <code>ECHClientHelloType</code>, then
-the server MUST abort with an "illegal_parameter" alert.<a href="#section-7-2.3" class="pilcrow">¶</a>
+        <li class="normal" id="section-7-2.3">
+          <p id="section-7-2.3.1">Otherwise, if <code>ECHClientHello.type</code> is not a valid <code>ECHClientHelloType</code>, then
+the server MUST abort with an "illegal_parameter" alert.<a href="#section-7-2.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="section-7-3">If the "encrypted_client_hello" is not present, then the server completes the
@@ -2434,11 +2445,13 @@ version preferences may have changed.<a href="#section-7.1-1" class="pilcrow">¶
 <p id="section-7.1-2">First, the server collects a set of candidate ECHConfig values. This list is
 determined by one of the two following methods:<a href="#section-7.1-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-7.1-3">
-<li id="section-7.1-3.1">Compare ECHClientHello.config_id against identifiers of each known ECHConfig
-and select the ones that match, if any, as candidates.<a href="#section-7.1-3.1" class="pilcrow">¶</a>
+<li id="section-7.1-3.1">
+            <p id="section-7.1-3.1.1">Compare ECHClientHello.config_id against identifiers of each known ECHConfig
+and select the ones that match, if any, as candidates.<a href="#section-7.1-3.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-7.1-3.2">Collect all known ECHConfig values as candidates, with trial decryption
-below determining the final selection.<a href="#section-7.1-3.2" class="pilcrow">¶</a>
+          <li id="section-7.1-3.2">
+            <p id="section-7.1-3.2.1">Collect all known ECHConfig values as candidates, with trial decryption
+below determining the final selection.<a href="#section-7.1-3.2.1" class="pilcrow">¶</a></p>
 </li>
         </ol>
 <p id="section-7.1-4">Some uses of ECH, such as local discovery mode, may randomize the
@@ -2485,15 +2498,17 @@ messages between the client and backend server unmodified.<a href="#section-7.1-
 client-facing server MUST ignore the extension and proceed with the connection
 using ClientHelloOuter, with the following modifications:<a href="#section-7.1-12" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-7.1-13.1">If sending a HelloRetryRequest, the server MAY include an
+<li class="normal" id="section-7.1-13.1">
+            <p id="section-7.1-13.1.1">If sending a HelloRetryRequest, the server MAY include an
 "encrypted_client_hello" extension with a payload of 8 random bytes; see
-<a href="#dont-stick-out" class="auto internal xref">Section 10.9.4</a> for details.<a href="#section-7.1-13.1" class="pilcrow">¶</a>
+<a href="#dont-stick-out" class="auto internal xref">Section 10.9.4</a> for details.<a href="#section-7.1-13.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.1-13.2">If the server is configured with any ECHConfigs, it MUST include the
+          <li class="normal" id="section-7.1-13.2">
+            <p id="section-7.1-13.2.1">If the server is configured with any ECHConfigs, it MUST include the
 "encrypted_client_hello" extension in its EncryptedExtensions with the
 "retry_configs" field set to one or more ECHConfig structures with up-to-date
 keys. Servers MAY supply multiple ECHConfig values of different versions.
-This allows a server to support multiple versions at once.<a href="#section-7.1-13.2" class="pilcrow">¶</a>
+This allows a server to support multiple versions at once.<a href="#section-7.1-13.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-7.1-14">Note that decryption failure could indicate a GREASE ECH extension (see
@@ -2683,11 +2698,14 @@ authoritative for the public name cannot forge a signal to disable ECH.<a href="
 <p id="section-9-1">In the absence of an application profile standard specifying otherwise,
 a compliant ECH application MUST implement the following HPKE cipher suite:<a href="#section-9-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-9-2.1">KEM: DHKEM(X25519, HKDF-SHA256) (see <span><a href="https://rfc-editor.org/rfc/rfc9180#section-7.1" class="relref">Section 7.1</a> of [<a href="#HPKE" class="cite xref">HPKE</a>]</span>)<a href="#section-9-2.1" class="pilcrow">¶</a>
+<li class="normal" id="section-9-2.1">
+          <p id="section-9-2.1.1">KEM: DHKEM(X25519, HKDF-SHA256) (see <span><a href="https://rfc-editor.org/rfc/rfc9180#section-7.1" class="relref">Section 7.1</a> of [<a href="#HPKE" class="cite xref">HPKE</a>]</span>)<a href="#section-9-2.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-9-2.2">KDF: HKDF-SHA256 (see <span><a href="https://rfc-editor.org/rfc/rfc9180#section-7.2" class="relref">Section 7.2</a> of [<a href="#HPKE" class="cite xref">HPKE</a>]</span>)<a href="#section-9-2.2" class="pilcrow">¶</a>
+        <li class="normal" id="section-9-2.2">
+          <p id="section-9-2.2.1">KDF: HKDF-SHA256 (see <span><a href="https://rfc-editor.org/rfc/rfc9180#section-7.2" class="relref">Section 7.2</a> of [<a href="#HPKE" class="cite xref">HPKE</a>]</span>)<a href="#section-9-2.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-9-2.3">AEAD: AES-128-GCM (see <span><a href="https://rfc-editor.org/rfc/rfc9180#section-7.3" class="relref">Section 7.3</a> of [<a href="#HPKE" class="cite xref">HPKE</a>]</span>)<a href="#section-9-2.3" class="pilcrow">¶</a>
+        <li class="normal" id="section-9-2.3">
+          <p id="section-9-2.3.1">AEAD: AES-128-GCM (see <span><a href="https://rfc-editor.org/rfc/rfc9180#section-7.3" class="relref">Section 7.3</a> of [<a href="#HPKE" class="cite xref">HPKE</a>]</span>)<a href="#section-9-2.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
@@ -2712,17 +2730,20 @@ DNS. In short, an active attacker corresponds to the conventional threat model
 for TLS 1.3 <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>.<a href="#section-10.1-1" class="pilcrow">¶</a></p>
 <p id="section-10.1-2">Given these types of attackers, the primary goals of ECH are as follows.<a href="#section-10.1-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-10.1-3">
-<li id="section-10.1-3.1">Security preservation. Use of ECH does not weaken the security properties of
-TLS without ECH.<a href="#section-10.1-3.1" class="pilcrow">¶</a>
+<li id="section-10.1-3.1">
+            <p id="section-10.1-3.1.1">Security preservation. Use of ECH does not weaken the security properties of
+TLS without ECH.<a href="#section-10.1-3.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-10.1-3.2">Handshake privacy. TLS connection establishment to a host with a specific
+          <li id="section-10.1-3.2">
+            <p id="section-10.1-3.2.1">Handshake privacy. TLS connection establishment to a host with a specific
 ECHConfig and TLS configuration is indistinguishable from a connection to
 any other host with the same ECHConfig and TLS configuration. (The set of
 hosts which share the same ECHConfig and TLS configuration is referred to
-as the anonymity set.)<a href="#section-10.1-3.2" class="pilcrow">¶</a>
+as the anonymity set.)<a href="#section-10.1-3.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-10.1-3.3">Downgrade resistance. An attacker cannot downgrade a connection that
-attempts to use ECH to one that does not use ECH.<a href="#section-10.1-3.3" class="pilcrow">¶</a>
+          <li id="section-10.1-3.3">
+            <p id="section-10.1-3.3.1">Downgrade resistance. An attacker cannot downgrade a connection that
+attempts to use ECH to one that does not use ECH.<a href="#section-10.1-3.3.1" class="pilcrow">¶</a></p>
 </li>
         </ol>
 <p id="section-10.1-4">These properties were formally proven in <span>[<a href="#ECH-Analysis" class="cite xref">ECH-Analysis</a>]</span>.<a href="#section-10.1-4" class="pilcrow">¶</a></p>
@@ -2955,7 +2976,7 @@ values with different keys using a short TTL.<a href="#section-10.9.2-1" class="
 <p id="section-10.9.3-1">This design requires servers to decrypt ClientHello messages with ECHClientHello
 extensions carrying valid digests. Thus, it is possible for an attacker to force
 decryption operations on the server. This attack is bound by the number of valid
-TCP connections an attacker can open.<a href="#section-10.9.3-1" class="pilcrow">¶</a></p>
+transport connections an attacker can open.<a href="#section-10.9.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="dont-stick-out">
@@ -2987,28 +3008,36 @@ flexibility to achieve stronger security where possible. Minimally, real ECH is
 designed to be indifferentiable from GREASE ECH for passive adversaries with
 following capabilities:<a href="#section-10.9.4-3" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-10.9.4-4">
-<li id="section-10.9.4-4.1">The attacker does not know the ECHConfigList used by the server.<a href="#section-10.9.4-4.1" class="pilcrow">¶</a>
+<li id="section-10.9.4-4.1">
+              <p id="section-10.9.4-4.1.1">The attacker does not know the ECHConfigList used by the server.<a href="#section-10.9.4-4.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-10.9.4-4.2">The attacker keeps per-connection state only. In particular, it does not
-track endpoints across connections.<a href="#section-10.9.4-4.2" class="pilcrow">¶</a>
+            <li id="section-10.9.4-4.2">
+              <p id="section-10.9.4-4.2.1">The attacker keeps per-connection state only. In particular, it does not
+track endpoints across connections.<a href="#section-10.9.4-4.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-10.9.4-4.3">ECH and GREASE ECH are designed so that the following features do not vary:
+            <li id="section-10.9.4-4.3">
+              <p id="section-10.9.4-4.3.1">ECH and GREASE ECH are designed so that the following features do not vary:
 the code points of extensions negotiated in the clear; the length of
-messages; and the values of plaintext alert messages.<a href="#section-10.9.4-4.3" class="pilcrow">¶</a>
+messages; and the values of plaintext alert messages.<a href="#section-10.9.4-4.3.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 <p id="section-10.9.4-5">This leaves a variety of practical differentiators out-of-scope. including,
 though not limited to, the following:<a href="#section-10.9.4-5" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-10.9.4-6">
-<li id="section-10.9.4-6.1">the value of the configuration identifier;<a href="#section-10.9.4-6.1" class="pilcrow">¶</a>
+<li id="section-10.9.4-6.1">
+              <p id="section-10.9.4-6.1.1">the value of the configuration identifier;<a href="#section-10.9.4-6.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-10.9.4-6.2">the value of the outer SNI;<a href="#section-10.9.4-6.2" class="pilcrow">¶</a>
+            <li id="section-10.9.4-6.2">
+              <p id="section-10.9.4-6.2.1">the value of the outer SNI;<a href="#section-10.9.4-6.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-10.9.4-6.3">the TLS version negotiated, which may depend on ECH acceptance;<a href="#section-10.9.4-6.3" class="pilcrow">¶</a>
+            <li id="section-10.9.4-6.3">
+              <p id="section-10.9.4-6.3.1">the TLS version negotiated, which may depend on ECH acceptance;<a href="#section-10.9.4-6.3.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-10.9.4-6.4">client authentication, which may depend on ECH acceptance; and<a href="#section-10.9.4-6.4" class="pilcrow">¶</a>
+            <li id="section-10.9.4-6.4">
+              <p id="section-10.9.4-6.4.1">client authentication, which may depend on ECH acceptance; and<a href="#section-10.9.4-6.4.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-10.9.4-6.5">HRR issuance, which may depend on ECH acceptance.<a href="#section-10.9.4-6.5" class="pilcrow">¶</a>
+            <li id="section-10.9.4-6.5">
+              <p id="section-10.9.4-6.5.1">HRR issuance, which may depend on ECH acceptance.<a href="#section-10.9.4-6.5.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 <p id="section-10.9.4-7">These can be addressed with more sophisticated implementations, but some
@@ -3259,19 +3288,21 @@ ClientHello vulnerable to an analogue of this attack.<a href="#section-10.11.3-5
 attacker may craft a packet which takes excessive resources to decompress
 or may be much larger than the incoming packet:<a href="#section-10.11.4-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-10.11.4-2.1">If looking up a ClientHelloOuter extension takes time linear in the number of
+<li class="normal" id="section-10.11.4-2.1">
+              <p id="section-10.11.4-2.1.1">If looking up a ClientHelloOuter extension takes time linear in the number of
 extensions, the overall decoding process would take O(M*N) time, where
 M is the number of extensions in ClientHelloOuter and N is the
-size of OuterExtensions.<a href="#section-10.11.4-2.1" class="pilcrow">¶</a>
+size of OuterExtensions.<a href="#section-10.11.4-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-10.11.4-2.2">If the same ClientHelloOuter extension can be copied multiple times,
+            <li class="normal" id="section-10.11.4-2.2">
+              <p id="section-10.11.4-2.2.1">If the same ClientHelloOuter extension can be copied multiple times,
 an attacker could cause the client-facing server to construct a large
 ClientHelloInner by including a large extension in ClientHelloOuter,
 of length L, and an OuterExtensions list referencing N copies of that
 extension. The client-facing server would then use O(N*L) memory in
 response to O(N+L) bandwidth from the client. In split-mode, an
 O(N*L) sized packet would then be transmitted to the
-backend server.<a href="#section-10.11.4-2.2" class="pilcrow">¶</a>
+backend server.<a href="#section-10.11.4-2.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-10.11.4-3">ECH mitigates this attack by requiring that OuterExtensions be referenced in
@@ -3297,11 +3328,13 @@ requirements are detailed in <a href="#encoding-inner" class="auto internal xref
 <p id="section-11.1-1">IANA is requested to create the following entries in the existing registry for
 ExtensionType (defined in <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>):<a href="#section-11.1-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-11.1-2">
-<li id="section-11.1-2.1">encrypted_client_hello(0xfe0d), with "TLS 1.3" column values set to
-"CH, HRR, EE", and "Recommended" column set to "Yes".<a href="#section-11.1-2.1" class="pilcrow">¶</a>
+<li id="section-11.1-2.1">
+            <p id="section-11.1-2.1.1">encrypted_client_hello(0xfe0d), with "TLS 1.3" column values set to
+"CH, HRR, EE", and "Recommended" column set to "Yes".<a href="#section-11.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-11.1-2.2">ech_outer_extensions(0xfd00), with the "TLS 1.3" column values set to "",
-and "Recommended" column set to "Yes".<a href="#section-11.1-2.2" class="pilcrow">¶</a>
+          <li id="section-11.1-2.2">
+            <p id="section-11.1-2.2.1">ech_outer_extensions(0xfd00), with the "TLS 1.3" column values set to "",
+and "Recommended" column set to "Yes".<a href="#section-11.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
         </ol>
 </section>
@@ -3335,6 +3368,7 @@ true ClientHello used upon ECH negotiation.<a href="#section-12-1" class="pilcro
       <h2 id="name-references">
 <a href="#section-13" class="section-number selfRef">13. </a><a href="#name-references" class="section-name selfRef">References</a>
       </h2>
+<div id="sec-normative-references">
 <section id="section-13.1">
         <h3 id="name-normative-references">
 <a href="#section-13.1" class="section-number selfRef">13.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
@@ -3374,6 +3408,8 @@ true ClientHello used upon ECH negotiation.<a href="#section-12-1" class="pilcro
 <dd class="break"></dd>
 </dl>
 </section>
+</div>
+<div id="sec-informative-references">
 <section id="section-13.2">
         <h3 id="name-informative-references">
 <a href="#section-13.2" class="section-number selfRef">13.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
@@ -3433,6 +3469,7 @@ true ClientHello used upon ECH negotiation.<a href="#section-12-1" class="pilcro
 <dd class="break"></dd>
 </dl>
 </section>
+</div>
 </section>
 <div id="alternative-sni-protection-designs">
 <section id="appendix-A">
@@ -3522,22 +3559,27 @@ application layer.<a href="#appendix-A.2.1-1" class="pilcrow">¶</a></p>
 <a href="#encoding-inner" class="auto internal xref">Section 5.1</a>) in linear time, ensuring that each referenced extension
 in the ClientHelloOuter is included at most once:<a href="#appendix-B-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="appendix-B-2">
-<li id="appendix-B-2.1">Let I be zero and N be the number of extensions in ClientHelloOuter.<a href="#appendix-B-2.1" class="pilcrow">¶</a>
+<li id="appendix-B-2.1">
+          <p id="appendix-B-2.1.1">Let I be zero and N be the number of extensions in ClientHelloOuter.<a href="#appendix-B-2.1.1" class="pilcrow">¶</a></p>
 </li>
         <li id="appendix-B-2.2">
           <p id="appendix-B-2.2.1">For each extension type, E, in OuterExtensions:<a href="#appendix-B-2.2.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="appendix-B-2.2.2.1">If E is "encrypted_client_hello", abort the connection with an
-"illegal_parameter" alert and terminate this procedure.<a href="#appendix-B-2.2.2.1" class="pilcrow">¶</a>
+<li class="normal" id="appendix-B-2.2.2.1">
+              <p id="appendix-B-2.2.2.1.1">If E is "encrypted_client_hello", abort the connection with an
+"illegal_parameter" alert and terminate this procedure.<a href="#appendix-B-2.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="appendix-B-2.2.2.2">While I is less than N and the I-th extension of
-ClientHelloOuter does not have type E, increment I.<a href="#appendix-B-2.2.2.2" class="pilcrow">¶</a>
+            <li class="normal" id="appendix-B-2.2.2.2">
+              <p id="appendix-B-2.2.2.2.1">While I is less than N and the I-th extension of
+ClientHelloOuter does not have type E, increment I.<a href="#appendix-B-2.2.2.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="appendix-B-2.2.2.3">If I is equal to N, abort the connection with an "illegal_parameter"
-alert and terminate this procedure.<a href="#appendix-B-2.2.2.3" class="pilcrow">¶</a>
+            <li class="normal" id="appendix-B-2.2.2.3">
+              <p id="appendix-B-2.2.2.3.1">If I is equal to N, abort the connection with an "illegal_parameter"
+alert and terminate this procedure.<a href="#appendix-B-2.2.2.3.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="appendix-B-2.2.2.4">Otherwise, the I-th extension of ClientHelloOuter has type E. Copy
-it to the EncodedClientHelloInner and increment I.<a href="#appendix-B-2.2.2.4" class="pilcrow">¶</a>
+            <li class="normal" id="appendix-B-2.2.2.4">
+              <p id="appendix-B-2.2.2.4.1">Otherwise, the I-th extension of ClientHelloOuter has type E. Copy
+it to the EncodedClientHelloInner and increment I.<a href="#appendix-B-2.2.2.4.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </li>
@@ -3574,7 +3616,8 @@ final version of this document.<a href="#appendix-D-1.1.1" class="pilcrow">¶</a
 <a href="#appendix-D.1" class="section-number selfRef">D.1. </a><a href="#name-since-draft-ietf-tls-esni-1" class="section-name selfRef">Since draft-ietf-tls-esni-16</a>
         </h3>
 <ul class="normal">
-<li class="normal" id="appendix-D.1-1.1">Keep-alive<a href="#appendix-D.1-1.1" class="pilcrow">¶</a>
+<li class="normal" id="appendix-D.1-1.1">
+            <p id="appendix-D.1-1.1.1">Keep-alive<a href="#appendix-D.1-1.1.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -3585,7 +3628,8 @@ final version of this document.<a href="#appendix-D-1.1.1" class="pilcrow">¶</a
 <a href="#appendix-D.2" class="section-number selfRef">D.2. </a><a href="#name-since-draft-ietf-tls-esni-15" class="section-name selfRef">Since draft-ietf-tls-esni-15</a>
         </h3>
 <ul class="normal">
-<li class="normal" id="appendix-D.2-1.1">Add CCS2022 reference and summary (#539)<a href="#appendix-D.2-1.1" class="pilcrow">¶</a>
+<li class="normal" id="appendix-D.2-1.1">
+            <p id="appendix-D.2-1.1.1">Add CCS2022 reference and summary (#539)<a href="#appendix-D.2-1.1.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -3596,7 +3640,8 @@ final version of this document.<a href="#appendix-D-1.1.1" class="pilcrow">¶</a
 <a href="#appendix-D.3" class="section-number selfRef">D.3. </a><a href="#name-since-draft-ietf-tls-esni-14" class="section-name selfRef">Since draft-ietf-tls-esni-14</a>
         </h3>
 <ul class="normal">
-<li class="normal" id="appendix-D.3-1.1">Keep-alive<a href="#appendix-D.3-1.1" class="pilcrow">¶</a>
+<li class="normal" id="appendix-D.3-1.1">
+            <p id="appendix-D.3-1.1.1">Keep-alive<a href="#appendix-D.3-1.1.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -3607,7 +3652,8 @@ final version of this document.<a href="#appendix-D-1.1.1" class="pilcrow">¶</a
 <a href="#appendix-D.4" class="section-number selfRef">D.4. </a><a href="#name-since-draft-ietf-tls-esni-13" class="section-name selfRef">Since draft-ietf-tls-esni-13</a>
         </h3>
 <ul class="normal">
-<li class="normal" id="appendix-D.4-1.1">Editorial improvements<a href="#appendix-D.4-1.1" class="pilcrow">¶</a>
+<li class="normal" id="appendix-D.4-1.1">
+            <p id="appendix-D.4-1.1.1">Editorial improvements<a href="#appendix-D.4-1.1.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -3618,21 +3664,28 @@ final version of this document.<a href="#appendix-D-1.1.1" class="pilcrow">¶</a
 <a href="#appendix-D.5" class="section-number selfRef">D.5. </a><a href="#name-since-draft-ietf-tls-esni-12" class="section-name selfRef">Since draft-ietf-tls-esni-12</a>
         </h3>
 <ul class="normal">
-<li class="normal" id="appendix-D.5-1.1">Abort on duplicate OuterExtensions (#514)<a href="#appendix-D.5-1.1" class="pilcrow">¶</a>
+<li class="normal" id="appendix-D.5-1.1">
+            <p id="appendix-D.5-1.1.1">Abort on duplicate OuterExtensions (#514)<a href="#appendix-D.5-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.5-1.2">Improve EncodedClientHelloInner definition (#503)<a href="#appendix-D.5-1.2" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.5-1.2">
+            <p id="appendix-D.5-1.2.1">Improve EncodedClientHelloInner definition (#503)<a href="#appendix-D.5-1.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.5-1.3">Clarify retry configuration usage (#498)<a href="#appendix-D.5-1.3" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.5-1.3">
+            <p id="appendix-D.5-1.3.1">Clarify retry configuration usage (#498)<a href="#appendix-D.5-1.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.5-1.4">Expand on config_id generation implications (#491)<a href="#appendix-D.5-1.4" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.5-1.4">
+            <p id="appendix-D.5-1.4.1">Expand on config_id generation implications (#491)<a href="#appendix-D.5-1.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.5-1.5">Server-side acceptance signal extension GREASE (#481)<a href="#appendix-D.5-1.5" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.5-1.5">
+            <p id="appendix-D.5-1.5.1">Server-side acceptance signal extension GREASE (#481)<a href="#appendix-D.5-1.5.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.5-1.6">Refactor overview, client implementation, and middlebox
-sections (#480, #478, #475, #508)<a href="#appendix-D.5-1.6" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.5-1.6">
+            <p id="appendix-D.5-1.6.1">Refactor overview, client implementation, and middlebox
+sections (#480, #478, #475, #508)<a href="#appendix-D.5-1.6.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.5-1.7">Editorial iprovements (#485, #488, #490, #495, #496, #499, #500,
-#501, #504, #505, #507, #510, #511)<a href="#appendix-D.5-1.7" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.5-1.7">
+            <p id="appendix-D.5-1.7.1">Editorial iprovements (#485, #488, #490, #495, #496, #499, #500,
+#501, #504, #505, #507, #510, #511)<a href="#appendix-D.5-1.7.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -3643,15 +3696,20 @@ sections (#480, #478, #475, #508)<a href="#appendix-D.5-1.6" class="pilcrow">¶<
 <a href="#appendix-D.6" class="section-number selfRef">D.6. </a><a href="#name-since-draft-ietf-tls-esni-11" class="section-name selfRef">Since draft-ietf-tls-esni-11</a>
         </h3>
 <ul class="normal">
-<li class="normal" id="appendix-D.6-1.1">Move ClientHello padding to the encoding (#443)<a href="#appendix-D.6-1.1" class="pilcrow">¶</a>
+<li class="normal" id="appendix-D.6-1.1">
+            <p id="appendix-D.6-1.1.1">Move ClientHello padding to the encoding (#443)<a href="#appendix-D.6-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.6-1.2">Align codepoints (#464)<a href="#appendix-D.6-1.2" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.6-1.2">
+            <p id="appendix-D.6-1.2.1">Align codepoints (#464)<a href="#appendix-D.6-1.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.6-1.3">Relax OuterExtensions checks for alignment with RFC8446 (#467)<a href="#appendix-D.6-1.3" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.6-1.3">
+            <p id="appendix-D.6-1.3.1">Relax OuterExtensions checks for alignment with RFC8446 (#467)<a href="#appendix-D.6-1.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.6-1.4">Clarify HRR acceptance and rejection logic (#470)<a href="#appendix-D.6-1.4" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.6-1.4">
+            <p id="appendix-D.6-1.4.1">Clarify HRR acceptance and rejection logic (#470)<a href="#appendix-D.6-1.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.6-1.5">Editorial improvements (#468, #465, #462, #461)<a href="#appendix-D.6-1.5" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.6-1.5">
+            <p id="appendix-D.6-1.5.1">Editorial improvements (#468, #465, #462, #461)<a href="#appendix-D.6-1.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -3662,28 +3720,39 @@ sections (#480, #478, #475, #508)<a href="#appendix-D.5-1.6" class="pilcrow">¶<
 <a href="#appendix-D.7" class="section-number selfRef">D.7. </a><a href="#name-since-draft-ietf-tls-esni-10" class="section-name selfRef">Since draft-ietf-tls-esni-10</a>
         </h3>
 <ul class="normal">
-<li class="normal" id="appendix-D.7-1.1">Make HRR confirmation and ECH acceptance explicit (#422, #423)<a href="#appendix-D.7-1.1" class="pilcrow">¶</a>
+<li class="normal" id="appendix-D.7-1.1">
+            <p id="appendix-D.7-1.1.1">Make HRR confirmation and ECH acceptance explicit (#422, #423)<a href="#appendix-D.7-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.7-1.2">Relax computation of the acceptance signal (#420, #449)<a href="#appendix-D.7-1.2" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.7-1.2">
+            <p id="appendix-D.7-1.2.1">Relax computation of the acceptance signal (#420, #449)<a href="#appendix-D.7-1.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.7-1.3">Simplify ClientHelloOuterAAD generation (#438, #442)<a href="#appendix-D.7-1.3" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.7-1.3">
+            <p id="appendix-D.7-1.3.1">Simplify ClientHelloOuterAAD generation (#438, #442)<a href="#appendix-D.7-1.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.7-1.4">Allow empty enc in ECHClientHello (#444)<a href="#appendix-D.7-1.4" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.7-1.4">
+            <p id="appendix-D.7-1.4.1">Allow empty enc in ECHClientHello (#444)<a href="#appendix-D.7-1.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.7-1.5">Authenticate ECHClientHello extensions position in ClientHelloOuterAAD (#410)<a href="#appendix-D.7-1.5" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.7-1.5">
+            <p id="appendix-D.7-1.5.1">Authenticate ECHClientHello extensions position in ClientHelloOuterAAD (#410)<a href="#appendix-D.7-1.5.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.7-1.6">Allow clients to send a dummy PSK and early_data in ClientHelloOuter when
-applicable (#414, #415)<a href="#appendix-D.7-1.6" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.7-1.6">
+            <p id="appendix-D.7-1.6.1">Allow clients to send a dummy PSK and early_data in ClientHelloOuter when
+applicable (#414, #415)<a href="#appendix-D.7-1.6.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.7-1.7">Compress ECHConfigContents (#409)<a href="#appendix-D.7-1.7" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.7-1.7">
+            <p id="appendix-D.7-1.7.1">Compress ECHConfigContents (#409)<a href="#appendix-D.7-1.7.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.7-1.8">Validate ECHConfig.contents.public_name (#413, #456)<a href="#appendix-D.7-1.8" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.7-1.8">
+            <p id="appendix-D.7-1.8.1">Validate ECHConfig.contents.public_name (#413, #456)<a href="#appendix-D.7-1.8.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.7-1.9">Validate ClientHelloInner contents (#411)<a href="#appendix-D.7-1.9" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.7-1.9">
+            <p id="appendix-D.7-1.9.1">Validate ClientHelloInner contents (#411)<a href="#appendix-D.7-1.9.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.7-1.10">Note split-mode challenges for HRR (#418)<a href="#appendix-D.7-1.10" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.7-1.10">
+            <p id="appendix-D.7-1.10.1">Note split-mode challenges for HRR (#418)<a href="#appendix-D.7-1.10.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.7-1.11">Editorial improvements (#428, #432, #439, #445, #458, #455)<a href="#appendix-D.7-1.11" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.7-1.11">
+            <p id="appendix-D.7-1.11.1">Editorial improvements (#428, #432, #439, #445, #458, #455)<a href="#appendix-D.7-1.11.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -3694,14 +3763,18 @@ applicable (#414, #415)<a href="#appendix-D.7-1.6" class="pilcrow">¶</a>
 <a href="#appendix-D.8" class="section-number selfRef">D.8. </a><a href="#name-since-draft-ietf-tls-esni-0" class="section-name selfRef">Since draft-ietf-tls-esni-09</a>
         </h3>
 <ul class="normal">
-<li class="normal" id="appendix-D.8-1.1">Finalize HPKE dependency (#390)<a href="#appendix-D.8-1.1" class="pilcrow">¶</a>
+<li class="normal" id="appendix-D.8-1.1">
+            <p id="appendix-D.8-1.1.1">Finalize HPKE dependency (#390)<a href="#appendix-D.8-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.8-1.2">Move from client-computed to server-chosen, one-byte config
-identifier (#376, #381)<a href="#appendix-D.8-1.2" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.8-1.2">
+            <p id="appendix-D.8-1.2.1">Move from client-computed to server-chosen, one-byte config
+identifier (#376, #381)<a href="#appendix-D.8-1.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.8-1.3">Rename ECHConfigs to ECHConfigList (#391)<a href="#appendix-D.8-1.3" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.8-1.3">
+            <p id="appendix-D.8-1.3.1">Rename ECHConfigs to ECHConfigList (#391)<a href="#appendix-D.8-1.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="appendix-D.8-1.4">Clarify some security and privacy properties (#385, #383)<a href="#appendix-D.8-1.4" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-D.8-1.4">
+            <p id="appendix-D.8-1.4.1">Clarify some security and privacy properties (#385, #383)<a href="#appendix-D.8-1.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>

@@ -5,11 +5,11 @@
 tls                                                          E. Rescorla
 Internet-Draft                                                RTFM, Inc.
 Intended status: Standards Track                                  K. Oku
-Expires: 23 March 2024                                            Fastly
+Expires: 14 April 2024                                            Fastly
                                                              N. Sullivan
                                                               C. A. Wood
                                                               Cloudflare
-                                                       20 September 2023
+                                                         12 October 2023
 
 
                        TLS Encrypted Client Hello
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 March 2024.
+   This Internet-Draft will expire on 14 April 2024.
 
 Copyright Notice
 
@@ -1027,7 +1027,7 @@ Table of Contents
    HelloRetryRequest or EncryptedExtensions, the client MUST check the
    extension syntactically and abort the connection with a
    "decode_error" alert if it is invalid.  It otherwise ignores the
-   extension.  It MUST NOT save the "retry_config" value in
+   extension.  It MUST NOT save the "retry_configs" value in
    EncryptedExtensions.
 
    Offering a GREASE extension is not considered offering an encrypted
@@ -1574,8 +1574,8 @@ Table of Contents
    This design requires servers to decrypt ClientHello messages with
    ECHClientHello extensions carrying valid digests.  Thus, it is
    possible for an attacker to force decryption operations on the
-   server.  This attack is bound by the number of valid TCP connections
-   an attacker can open.
+   server.  This attack is bound by the number of valid transport
+   connections an attacker can open.
 
 10.9.4.  Do Not Stick Out
 
