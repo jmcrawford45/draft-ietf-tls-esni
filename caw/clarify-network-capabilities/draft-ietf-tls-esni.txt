@@ -5,11 +5,11 @@
 tls                                                          E. Rescorla
 Internet-Draft                                                RTFM, Inc.
 Intended status: Standards Track                                  K. Oku
-Expires: 11 April 2024                                            Fastly
+Expires: 14 April 2024                                            Fastly
                                                              N. Sullivan
                                                               C. A. Wood
                                                               Cloudflare
-                                                          9 October 2023
+                                                         12 October 2023
 
 
                        TLS Encrypted Client Hello
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 April 2024.
+   This Internet-Draft will expire on 14 April 2024.
 
 Copyright Notice
 
@@ -1342,7 +1342,7 @@ Table of Contents
    Split Mode.  However, for Split Mode in particular, ECH makes two
    additional assumptions:
 
-   1.  The channel between the client-facing and backend server is
+   1.  The channel between each client-facing and each backend server is
        authenticated such that the backend server only accepts messages
        from trusted client-facing servers.  The exact mechanism for
        establishing this authenticated channel is out of scope for this
