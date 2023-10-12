@@ -123,23 +123,17 @@ Table of Contents
    13. References
      13.1.  Normative References
      13.2.  Informative References
-   Appendix A.  Alternative SNI Protection Designs
-     A.1.  TLS-layer
-       A.1.1.  TLS in Early Data
-       A.1.2.  Combined Tickets
-     A.2.  Application-layer
-       A.2.1.  HTTP/2 CERTIFICATE Frames
-   Appendix B.  Linear-time Outer Extension Processing
-   Appendix C.  Acknowledgements
-   Appendix D.  Change Log
-     D.1.  Since draft-ietf-tls-esni-16
-     D.2.  Since draft-ietf-tls-esni-15
-     D.3.  Since draft-ietf-tls-esni-14
-     D.4.  Since draft-ietf-tls-esni-13
-     D.5.  Since draft-ietf-tls-esni-12
-     D.6.  Since draft-ietf-tls-esni-11
-     D.7.  Since draft-ietf-tls-esni-10
-     D.8.  Since draft-ietf-tls-esni-09
+   Appendix A.  Linear-time Outer Extension Processing
+   Appendix B.  Acknowledgements
+   Appendix C.  Change Log
+     C.1.  Since draft-ietf-tls-esni-16
+     C.2.  Since draft-ietf-tls-esni-15
+     C.3.  Since draft-ietf-tls-esni-14
+     C.4.  Since draft-ietf-tls-esni-13
+     C.5.  Since draft-ietf-tls-esni-12
+     C.6.  Since draft-ietf-tls-esni-11
+     C.7.  Since draft-ietf-tls-esni-10
+     C.8.  Since draft-ietf-tls-esni-09
    Authors' Addresses
 
 1.  Introduction
@@ -606,7 +600,7 @@ Table of Contents
    Implementations SHOULD bound the time to compute a ClientHelloInner
    proportionally to the ClientHelloOuter size.  If the cost is
    disproportionately large, a malicious client could exploit this in a
-   denial of service attack.  Appendix B describes a linear-time
+   denial of service attack.  Appendix A describes a linear-time
    procedure that may be used for this purpose.
 
 5.2.  Authenticating the ClientHelloOuter
@@ -2000,11 +1994,6 @@ Table of Contents
               "A Symbolic Analysis of Privacy for TLS 1.3 with Encrypted
               Client Hello", November 2022.
 
-   [EXPORTED-AUTHENTICATORS]
-              Sullivan, N., "Exported Authenticators in TLS", RFC 9261,
-              DOI 10.17487/RFC9261, July 2022,
-              <https://www.rfc-editor.org/rfc/rfc9261>.
-
    [I-D.kazuho-protected-sni]
               Oku, K., "TLS Extensions for Protecting SNI", Work in
               Progress, Internet-Draft, draft-kazuho-protected-sni-00,
@@ -2059,65 +2048,7 @@ Table of Contents
               "URL Living Standard - IPv4 Parser", May 2021,
               <https://url.spec.whatwg.org/#concept-ipv4-parser>.
 
-Appendix A.  Alternative SNI Protection Designs
-
-   Alternative approaches to encrypted SNI may be implemented at the TLS
-   or application layer.  In this section we describe several
-   alternatives and discuss drawbacks in comparison to the design in
-   this document.
-
-A.1.  TLS-layer
-
-A.1.1.  TLS in Early Data
-
-   In this variant, TLS Client Hellos are tunneled within early data
-   payloads belonging to outer TLS connections established with the
-   client-facing server.  This requires clients to have established a
-   previous session -— and obtained PSKs —- with the server.  The
-   client-facing server decrypts early data payloads to uncover Client
-   Hellos destined for the backend server, and forwards them onwards as
-   necessary.  Afterwards, all records to and from backend servers are
-   forwarded by the client-facing server -- unmodified.  This avoids
-   double encryption of TLS records.
-
-   Problems with this approach are: (1) servers may not always be able
-   to distinguish inner Client Hellos from legitimate application data,
-   (2) nested 0-RTT data may not function correctly, (3) 0-RTT data may
-   not be supported -- especially under DoS -- leading to availability
-   concerns, and (4) clients must bootstrap tunnels (sessions), costing
-   an additional round trip and potentially revealing the SNI during the
-   initial connection.  In contrast, encrypted SNI protects the SNI in a
-   distinct Client Hello extension and neither abuses early data nor
-   requires a bootstrapping connection.
-
-A.1.2.  Combined Tickets
-
-   In this variant, client-facing and backend servers coordinate to
-   produce "combined tickets" that are consumable by both.  Clients
-   offer combined tickets to client-facing servers.  The latter parse
-   them to determine the correct backend server to which the Client
-   Hello should be forwarded.  This approach is problematic due to non-
-   trivial coordination between client-facing and backend servers for
-   ticket construction and consumption.  Moreover, it requires a
-   bootstrapping step similar to that of the previous variant.  In
-   contrast, encrypted SNI requires no such coordination.
-
-A.2.  Application-layer
-
-A.2.1.  HTTP/2 CERTIFICATE Frames
-
-   In this variant, clients request secondary certificates with
-   CERTIFICATE_REQUEST HTTP/2 frames after TLS connection completion.
-   In response, servers supply certificates via TLS exported
-   authenticators [EXPORTED-AUTHENTICATORS] in CERTIFICATE frames.
-   Clients use a generic SNI for the underlying client-facing server TLS
-   connection.  Problems with this approach include: (1) one additional
-   round trip before peer authentication, (2) non-trivial application-
-   layer dependencies and interaction, and (3) obtaining the generic SNI
-   to bootstrap the connection.  In contrast, encrypted SNI induces no
-   additional round trip and operates below the application layer.
-
-Appendix B.  Linear-time Outer Extension Processing
+Appendix A.  Linear-time Outer Extension Processing
 
    The following procedure processes the "ech_outer_extensions"
    extension (see Section 5.1) in linear time, ensuring that each
@@ -2141,7 +2072,7 @@ Appendix B.  Linear-time Outer Extension Processing
        *  Otherwise, the I-th extension of ClientHelloOuter has type E.
           Copy it to the EncodedClientHelloInner and increment I.
 
-Appendix C.  Acknowledgements
+Appendix B.  Acknowledgements
 
    This document draws extensively from ideas in
    [I-D.kazuho-protected-sni], but is a much more limited mechanism
@@ -2150,30 +2081,30 @@ Appendix C.  Acknowledgements
    Nick Sullivan, Martin Thomson, and David Benjamin also provided
    important ideas and contributions.
 
-Appendix D.  Change Log
+Appendix C.  Change Log
 
       *RFC Editor's Note:* Please remove this section prior to
       publication of a final version of this document.
 
    Issue and pull request numbers are listed with a leading octothorp.
 
-D.1.  Since draft-ietf-tls-esni-16
+C.1.  Since draft-ietf-tls-esni-16
 
    *  Keep-alive
 
-D.2.  Since draft-ietf-tls-esni-15
+C.2.  Since draft-ietf-tls-esni-15
 
    *  Add CCS2022 reference and summary (#539)
 
-D.3.  Since draft-ietf-tls-esni-14
+C.3.  Since draft-ietf-tls-esni-14
 
    *  Keep-alive
 
-D.4.  Since draft-ietf-tls-esni-13
+C.4.  Since draft-ietf-tls-esni-13
 
    *  Editorial improvements
 
-D.5.  Since draft-ietf-tls-esni-12
+C.5.  Since draft-ietf-tls-esni-12
 
    *  Abort on duplicate OuterExtensions (#514)
 
@@ -2191,7 +2122,7 @@ D.5.  Since draft-ietf-tls-esni-12
    *  Editorial iprovements (#485, #488, #490, #495, #496, #499, #500,
       #501, #504, #505, #507, #510, #511)
 
-D.6.  Since draft-ietf-tls-esni-11
+C.6.  Since draft-ietf-tls-esni-11
 
    *  Move ClientHello padding to the encoding (#443)
 
@@ -2203,7 +2134,7 @@ D.6.  Since draft-ietf-tls-esni-11
 
    *  Editorial improvements (#468, #465, #462, #461)
 
-D.7.  Since draft-ietf-tls-esni-10
+C.7.  Since draft-ietf-tls-esni-10
 
    *  Make HRR confirmation and ECH acceptance explicit (#422, #423)
 
@@ -2229,7 +2160,7 @@ D.7.  Since draft-ietf-tls-esni-10
 
    *  Editorial improvements (#428, #432, #439, #445, #458, #455)
 
-D.8.  Since draft-ietf-tls-esni-09
+C.8.  Since draft-ietf-tls-esni-09
 
    *  Finalize HPKE dependency (#390)
 
