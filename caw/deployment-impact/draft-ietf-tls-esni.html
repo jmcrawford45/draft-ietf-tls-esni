@@ -1033,7 +1033,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Rescorla, et al.</td>
-<td class="center">Expires 12 April 2024</td>
+<td class="center">Expires 14 April 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1046,12 +1046,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-tls-esni-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2023-10-10" class="published">10 October 2023</time>
+<time datetime="2023-10-12" class="published">12 October 2023</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-04-12">12 April 2024</time></dd>
+<dd class="expires"><time datetime="2024-04-14">14 April 2024</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1106,7 +1106,7 @@ encrypting a ClientHello message under a server public key.<a href="#section-abs
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 12 April 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 14 April 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -2725,10 +2725,17 @@ implementations will fall back to TLS without ECH in the event of disablement.<a
 <p id="section-8.2-2">Depending on implementation details and deployment settings, use cases
 which depend on plaintext TLS information may require fundamentally different
 approaches to continue working. For example, in managed enterprise settings,
-one approach may be to disable ECH entirely and for client implementations
-to honor this request. Another approach may be to intercept and decrypt client
-TLS connections. The feasibility of alternative solutions is specific to
-individual deployments.<a href="#section-8.2-2" class="pilcrow">¶</a></p>
+one approach may be to disable ECH entirely via via group policy and for
+client implementations to honor this action. Another approach may be to
+intercept and decrypt client TLS connections. The feasibility of alternative
+solutions is specific to individual deployments.<a href="#section-8.2-2" class="pilcrow">¶</a></p>
+<p id="section-8.2-3">In environments where the network operator controls the endpoint devices, but
+is concerned about the security consequences of compromised devices, e.g., data
+exfiltration, the SNI field is unsuitable for use as a control even in the
+absence of ECH. This is because compromised devices can alter or spoof the
+value in an SNI field already, and can even bypass security appliances which
+try to 'double-check' websites hosted by the target server. ECH does not
+materially change this situation.<a href="#section-8.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>

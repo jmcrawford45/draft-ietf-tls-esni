@@ -5,11 +5,11 @@
 tls                                                          E. Rescorla
 Internet-Draft                                                RTFM, Inc.
 Intended status: Standards Track                                  K. Oku
-Expires: 12 April 2024                                            Fastly
+Expires: 14 April 2024                                            Fastly
                                                              N. Sullivan
                                                               C. A. Wood
                                                               Cloudflare
-                                                         10 October 2023
+                                                         12 October 2023
 
 
                        TLS Encrypted Client Hello
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 12 April 2024.
+   This Internet-Draft will expire on 14 April 2024.
 
 Copyright Notice
 
@@ -1337,10 +1337,19 @@ Table of Contents
    cases which depend on plaintext TLS information may require
    fundamentally different approaches to continue working.  For example,
    in managed enterprise settings, one approach may be to disable ECH
-   entirely and for client implementations to honor this request.
-   Another approach may be to intercept and decrypt client TLS
-   connections.  The feasibility of alternative solutions is specific to
-   individual deployments.
+   entirely via via group policy and for client implementations to honor
+   this action.  Another approach may be to intercept and decrypt client
+   TLS connections.  The feasibility of alternative solutions is
+   specific to individual deployments.
+
+   In environments where the network operator controls the endpoint
+   devices, but is concerned about the security consequences of
+   compromised devices, e.g., data exfiltration, the SNI field is
+   unsuitable for use as a control even in the absence of ECH.  This is
+   because compromised devices can alter or spoof the value in an SNI
+   field already, and can even bypass security appliances which try to
+   'double-check' websites hosted by the target server.  ECH does not
+   materially change this situation.
 
 9.  Compliance Requirements
 
