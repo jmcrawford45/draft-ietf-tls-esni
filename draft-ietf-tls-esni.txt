@@ -118,6 +118,7 @@ Table of Contents
    11. IANA Considerations
      11.1.  Update of the TLS ExtensionType Registry
      11.2.  Update of the TLS Alert Registry
+     11.3.  ECH Configuration Extension Registry
    12. ECHConfig Extension Guidance
    13. References
      13.1.  Normative References
@@ -305,10 +306,15 @@ Table of Contents
        } HpkeKeyConfig;
 
        struct {
+           ECHConfigExtensionType type;
+           opaque data<0..2^16-1>;
+       } ECHConfigExtension;
+
+       struct {
            HpkeKeyConfig key_config;
            uint8 maximum_name_length;
            opaque public_name<1..255>;
-           Extension extensions<0..2^16-1>;
+           ECHConfigExtension extensions<0..2^16-1>;
        } ECHConfigContents;
 
        struct {
@@ -364,9 +370,12 @@ Table of Contents
       See Section 6.1.7 for how the client interprets and validates the
       public_name.
 
-   extensions  A list of extensions that the client must take into
-      consideration when generating a ClientHello message.  These are
-      described below (Section 4.2).
+   extensions  A list of ECHConfigExtension values that the client must
+      take into consideration when generating a ClientHello message.
+      Each ECHConfigExtension has a 2-octet type and opaque data value,
+      where the data value is encoded with a 2-octet integer
+      representing the length of the data, in network byte order.
+      ECHConfigExtension values are described below (Section 4.2).
 
    [[OPEN ISSUE: determine if clients should enforce a 63-octet label
    limit for public_name]] [[OPEN ISSUE: fix reference to WHATWG-IPV4]]
@@ -425,11 +434,14 @@ Table of Contents
    functionality as needed.  See Section 12 for guidance on which types
    of extensions are appropriate for this structure.
 
-   The format is as defined in [RFC8446], Section 4.2.  The same
-   interpretation rules apply: extensions MAY appear in any order, but
-   there MUST NOT be more than one extension of the same type in the
-   extensions block.  An extension can be tagged as mandatory by using
-   an extension type codepoint with the high order bit set to 1.
+   The format is as defined in Section 4 and mirrors Section 4.2 of
+   [RFC8446].  However, ECH configuration extension types are maintained
+   by IANA as described in Section 11.3.  ECH configuration extensions
+   follow the same interpretation rules as TLS extensions: extensions
+   MAY appear in any order, but there MUST NOT be more than one
+   extension of the same type in the extensions block.  Unlike TLS
+   extensions, an extension can be tagged as mandatory by using an
+   extension type codepoint with the high order bit set to 1.
 
    Clients MUST parse the extension list and check for unsupported
    mandatory extensions.  If an unsupported mandatory extension is
@@ -1895,6 +1907,28 @@ Table of Contents
    existing registry for Alerts (defined in [RFC8446]), with the "DTLS-
    OK" column set to "Y".
 
+11.3.  ECH Configuration Extension Registry
+
+   IANA is requested to create a new "ECHConfig Extension" registry in a
+   new "TLS Encrypted Client Hello (ECH) Configuration Extensions" page.
+   New registrations need to list the following attributes:
+
+   Value:  The two-byte identifier for the ECHConfigExtension, i.e., the
+      ECHConfigExtensionType
+   Extension Name:  Name of the ECHConfigExtension
+   Recommended:  A "Y" or "N" value indicating if the extension is TLS
+      WG recommends that the extension be supported.  This column is
+      assigned a value of "N" unless explicitly requested.  Adding a
+      value with a value of "Y" requires Standards Action [RFC8126].
+   Reference:  The specification where the ECHConfigExtension is defined
+   Notes:  Any notes associated with the entry
+
+   New entries in this registry are subject to the Specification
+   Required registration policy ([RFC8126], Section 4.6).
+
+   The registration policy for for the "ECHConfig Extension Type"
+   registry is Specification Required [RFC8126].
+
 12.  ECHConfig Extension Guidance
 
    Any future information or hints that influence ClientHelloOuter
@@ -1941,6 +1975,11 @@ Table of Contents
               Layer Security (TLS) False Start", RFC 7918,
               DOI 10.17487/RFC7918, August 2016,
               <https://www.rfc-editor.org/rfc/rfc7918>.
+
+   [RFC8126]  Cotton, M., Leiba, B., and T. Narten, "Guidelines for
+              Writing an IANA Considerations Section in RFCs", BCP 26,
+              RFC 8126, DOI 10.17487/RFC8126, June 2017,
+              <https://www.rfc-editor.org/rfc/rfc8126>.
 
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
