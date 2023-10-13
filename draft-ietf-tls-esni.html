@@ -1033,7 +1033,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Rescorla, et al.</td>
-<td class="center">Expires 14 April 2024</td>
+<td class="center">Expires 15 April 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1046,12 +1046,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-tls-esni-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2023-10-12" class="published">12 October 2023</time>
+<time datetime="2023-10-13" class="published">13 October 2023</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-04-14">14 April 2024</time></dd>
+<dd class="expires"><time datetime="2024-04-15">15 April 2024</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1106,7 +1106,7 @@ encrypting a ClientHello message under a server public key.<a href="#section-abs
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 14 April 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 15 April 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1230,13 +1230,21 @@ encrypting a ClientHello message under a server public key.<a href="#section-abs
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
-            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-compatibility-issues" class="internal xref">Compatibility Issues</a></p>
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-deployment-considerations" class="internal xref">Deployment Considerations</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
-                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-misconfiguration-and-deploy" class="internal xref">Misconfiguration and Deployment Concerns</a></p>
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-compatibility-issues" class="internal xref">Compatibility Issues</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1.2.1">
+                    <p id="section-toc.1-1.8.2.1.2.1.1"><a href="#section-8.1.1" class="auto internal xref">8.1.1</a>.  <a href="#name-misconfiguration-and-deploy" class="internal xref">Misconfiguration and Deployment Concerns</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1.2.2">
+                    <p id="section-toc.1-1.8.2.1.2.2.1"><a href="#section-8.1.2" class="auto internal xref">8.1.2</a>.  <a href="#name-middleboxes" class="internal xref">Middleboxes</a></p>
+</li>
+                </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
-                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-middleboxes" class="internal xref">Middleboxes</a></p>
+                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-deployment-impact" class="internal xref">Deployment Impact</a></p>
 </li>
             </ul>
 </li>
@@ -1420,7 +1428,8 @@ list <span>[<a href="#RFC7301" class="cite xref">RFC7301</a>]</span>. Co-located
 configurations, including supported versions and cipher suites, form an
 anonymity set. Usage of this mechanism reveals that a client is connecting to a
 particular service provider, but does not reveal which server from the
-anonymity set terminates the connection.<a href="#section-1-4" class="pilcrow">¶</a></p>
+anonymity set terminates the connection. Deployment implications of this
+feature are discussed in <a href="#deployment" class="auto internal xref">Section 8</a>.<a href="#section-1-4" class="pilcrow">¶</a></p>
 <p id="section-1-5">ECH is supported in TLS 1.3 <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>, DTLS 1.3 <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span>, and
 newer versions of the TLS and DTLS protocols.<a href="#section-1-5" class="pilcrow">¶</a></p>
 </section>
@@ -2510,7 +2519,7 @@ This allows a server to support multiple versions at once.<a href="#section-7.1-
 <a href="#grease-ech" class="auto internal xref">Section 6.2</a>), so it is necessary for servers to proceed with the connection
 and rely on the client to abort if ECH was required. In particular, the
 unrecognized value alone does not indicate a misconfigured ECH advertisement
-(<a href="#misconfiguration" class="auto internal xref">Section 8.1</a>). Instead, servers can measure occurrences of the
+(<a href="#misconfiguration" class="auto internal xref">Section 8.1.1</a>). Instead, servers can measure occurrences of the
 "ech_required" alert to detect this case.<a href="#section-7.1-14" class="pilcrow">¶</a></p>
 <div id="client-facing-server-hrr">
 <section id="section-7.1.1">
@@ -2626,61 +2635,103 @@ accept_confirmation value as described in <a href="#backend-server" class="auto 
 </div>
 </section>
 </div>
-<div id="compatibility-issues">
+<div id="deployment">
 <section id="section-8">
-      <h2 id="name-compatibility-issues">
-<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-compatibility-issues" class="section-name selfRef">Compatibility Issues</a>
+      <h2 id="name-deployment-considerations">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-deployment-considerations" class="section-name selfRef">Deployment Considerations</a>
       </h2>
-<p id="section-8-1">Unlike most TLS extensions, placing the SNI value in an ECH extension is not
+<p id="section-8-1">The design of ECH as specified in this document necessarily requires changes
+to client, client-facing server, and backend server. Coordination between
+client-facing and backend server requires care, as deployment mistakes
+can lead to compatibility issues. These are discussed in <a href="#compat-issues" class="auto internal xref">Section 8.1</a>.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-2">Beyond coordination difficulties, ECH deployments may also induce challenges
+for use cases of information that ECH protects. In particular,
+use cases which depend on this unencrypted information may no longer work
+as desired. This is elaborated upon in <a href="#no-sni" class="auto internal xref">Section 8.2</a>.<a href="#section-8-2" class="pilcrow">¶</a></p>
+<div id="compat-issues">
+<section id="section-8.1">
+        <h3 id="name-compatibility-issues">
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-compatibility-issues" class="section-name selfRef">Compatibility Issues</a>
+        </h3>
+<p id="section-8.1-1">Unlike most TLS extensions, placing the SNI value in an ECH extension is not
 interoperable with existing servers, which expect the value in the existing
 plaintext extension. Thus server operators SHOULD ensure servers understand a
 given set of ECH keys before advertising them. Additionally, servers SHOULD
 retain support for any previously-advertised keys for the duration of their
-validity.<a href="#section-8-1" class="pilcrow">¶</a></p>
-<p id="section-8-2">However, in more complex deployment scenarios, this may be difficult to fully
+validity.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.1-2">However, in more complex deployment scenarios, this may be difficult to fully
 guarantee. Thus this protocol was designed to be robust in case of
 inconsistencies between systems that advertise ECH keys and servers, at the cost
-of extra round-trips due to a retry. Two specific scenarios are detailed below.<a href="#section-8-2" class="pilcrow">¶</a></p>
+of extra round-trips due to a retry. Two specific scenarios are detailed below.<a href="#section-8.1-2" class="pilcrow">¶</a></p>
 <div id="misconfiguration">
-<section id="section-8.1">
-        <h3 id="name-misconfiguration-and-deploy">
-<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-misconfiguration-and-deploy" class="section-name selfRef">Misconfiguration and Deployment Concerns</a>
-        </h3>
-<p id="section-8.1-1">It is possible for ECH advertisements and servers to become inconsistent. This
+<section id="section-8.1.1">
+          <h4 id="name-misconfiguration-and-deploy">
+<a href="#section-8.1.1" class="section-number selfRef">8.1.1. </a><a href="#name-misconfiguration-and-deploy" class="section-name selfRef">Misconfiguration and Deployment Concerns</a>
+          </h4>
+<p id="section-8.1.1-1">It is possible for ECH advertisements and servers to become inconsistent. This
 may occur, for instance, from DNS misconfiguration, caching issues, or an
 incomplete rollout in a multi-server deployment. This may also occur if a server
-loses its ECH keys, or if a deployment of ECH must be rolled back on the server.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.1-2">The retry mechanism repairs inconsistencies, provided the server is
+loses its ECH keys, or if a deployment of ECH must be rolled back on the server.<a href="#section-8.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.1.1-2">The retry mechanism repairs inconsistencies, provided the server is
 authoritative for the public name. If server and advertised keys mismatch, the
 server will reject ECH and respond with "retry_configs". If the server does
 not understand
 the "encrypted_client_hello" extension at all, it will ignore it as required by
 <span><a href="https://rfc-editor.org/rfc/rfc8446#section-4.1.2" class="relref">Section 4.1.2</a> of [<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>. Provided the server can present a certificate
 valid for the public name, the client can safely retry with updated settings,
-as described in <a href="#rejected-ech" class="auto internal xref">Section 6.1.6</a>.<a href="#section-8.1-2" class="pilcrow">¶</a></p>
-<p id="section-8.1-3">Unless ECH is disabled as a result of successfully establishing a connection to
+as described in <a href="#rejected-ech" class="auto internal xref">Section 6.1.6</a>.<a href="#section-8.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-8.1.1-3">Unless ECH is disabled as a result of successfully establishing a connection to
 the public name, the client MUST NOT fall back to using unencrypted
 ClientHellos, as this allows a network attacker to disclose the contents of this
 ClientHello, including the SNI. It MAY attempt to use another server from the
-DNS results, if one is provided.<a href="#section-8.1-3" class="pilcrow">¶</a></p>
+DNS results, if one is provided.<a href="#section-8.1.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="middleboxes">
-<section id="section-8.2">
-        <h3 id="name-middleboxes">
-<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-middleboxes" class="section-name selfRef">Middleboxes</a>
-        </h3>
-<p id="section-8.2-1">When connecting through a TLS-terminating proxy that does not support this
+<section id="section-8.1.2">
+          <h4 id="name-middleboxes">
+<a href="#section-8.1.2" class="section-number selfRef">8.1.2. </a><a href="#name-middleboxes" class="section-name selfRef">Middleboxes</a>
+          </h4>
+<p id="section-8.1.2-1">When connecting through a TLS-terminating proxy that does not support this
 extension, <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>], <a href="https://rfc-editor.org/rfc/rfc8446#section-9.3" class="relref">Section 9.3</a></span> requires the proxy still act as a
 conforming TLS client and server. The proxy must ignore unknown parameters, and
 generate its own ClientHello containing only parameters it understands. Thus,
 when presenting a certificate to the client or sending a ClientHello to the
 server, the proxy will act as if connecting to the public name, without echoing
-the "encrypted_client_hello" extension.<a href="#section-8.2-1" class="pilcrow">¶</a></p>
-<p id="section-8.2-2">Depending on whether the client is configured to accept the proxy's certificate
+the "encrypted_client_hello" extension.<a href="#section-8.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-8.1.2-2">Depending on whether the client is configured to accept the proxy's certificate
 as authoritative for the public name, this may trigger the retry logic described
 in <a href="#rejected-ech" class="auto internal xref">Section 6.1.6</a> or result in a connection failure. A proxy which is not
-authoritative for the public name cannot forge a signal to disable ECH.<a href="#section-8.2-2" class="pilcrow">¶</a></p>
+authoritative for the public name cannot forge a signal to disable ECH.<a href="#section-8.1.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="no-sni">
+<section id="section-8.2">
+        <h3 id="name-deployment-impact">
+<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-deployment-impact" class="section-name selfRef">Deployment Impact</a>
+        </h3>
+<p id="section-8.2-1">Some use cases which depend on information ECH encrypts may break with the
+deployment of ECH. The extent of breakage depends on a number of external
+factors, including, for example, whether ECH can be disabled, whether or not
+the party disabling ECH is trusted to do so, and whether or not client
+implementations will fall back to TLS without ECH in the event of disablement.<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+<p id="section-8.2-2">Depending on implementation details and deployment settings, use cases
+which depend on plaintext TLS information may require fundamentally different
+approaches to continue working. For example, in managed enterprise settings,
+one approach may be to disable ECH entirely via via group policy and for
+client implementations to honor this action. Another approach may be to
+intercept and decrypt client TLS connections. The feasibility of alternative
+solutions is specific to individual deployments.<a href="#section-8.2-2" class="pilcrow">¶</a></p>
+<p id="section-8.2-3">In environments where the network operator does not control the endpoint
+devices, or does controls the endpoint devices but is concerned about the
+security consequences of compromised devices, e.g., data exfiltration, the
+SNI field is unsuitable for use as a control even in the absence of ECH. This
+is because devices without controls, or which have been compromised, can alter
+or spoof the value in an SNI field already, and can even bypass security
+appliances which try to 'double-check' websites hosted by the target server.
+ECH does not materially change this situation.<a href="#section-8.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>

@@ -5,11 +5,11 @@
 tls                                                          E. Rescorla
 Internet-Draft                                                RTFM, Inc.
 Intended status: Standards Track                                  K. Oku
-Expires: 14 April 2024                                            Fastly
+Expires: 15 April 2024                                            Fastly
                                                              N. Sullivan
                                                               C. A. Wood
                                                               Cloudflare
-                                                         12 October 2023
+                                                         13 October 2023
 
 
                        TLS Encrypted Client Hello
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 April 2024.
+   This Internet-Draft will expire on 15 April 2024.
 
 Copyright Notice
 
@@ -87,9 +87,11 @@ Table of Contents
        7.1.1.  Sending HelloRetryRequest
      7.2.  Backend Server
        7.2.1.  Sending HelloRetryRequest
-   8.  Compatibility Issues
-     8.1.  Misconfiguration and Deployment Concerns
-     8.2.  Middleboxes
+   8.  Deployment Considerations
+     8.1.  Compatibility Issues
+       8.1.1.  Misconfiguration and Deployment Concerns
+       8.1.2.  Middleboxes
+     8.2.  Deployment Impact
    9.  Compliance Requirements
    10. Security Considerations
      10.1.  Security and Privacy Goals
@@ -169,7 +171,8 @@ Table of Contents
    versions and cipher suites, form an anonymity set.  Usage of this
    mechanism reveals that a client is connecting to a particular service
    provider, but does not reveal which server from the anonymity set
-   terminates the connection.
+   terminates the connection.  Deployment implications of this feature
+   are discussed in Section 8.
 
    ECH is supported in TLS 1.3 [RFC8446], DTLS 1.3 [RFC9147], and newer
    versions of the TLS and DTLS protocols.
@@ -1149,8 +1152,9 @@ Table of Contents
    (see Section 6.2), so it is necessary for servers to proceed with the
    connection and rely on the client to abort if ECH was required.  In
    particular, the unrecognized value alone does not indicate a
-   misconfigured ECH advertisement (Section 8.1).  Instead, servers can
-   measure occurrences of the "ech_required" alert to detect this case.
+   misconfigured ECH advertisement (Section 8.1.1).  Instead, servers
+   can measure occurrences of the "ech_required" alert to detect this
+   case.
 
 7.1.1.  Sending HelloRetryRequest
 
@@ -1258,7 +1262,21 @@ Table of Contents
    In the subsequent ServerHello message, the backend server sends the
    accept_confirmation value as described in Section 7.2.
 
-8.  Compatibility Issues
+8.  Deployment Considerations
+
+   The design of ECH as specified in this document necessarily requires
+   changes to client, client-facing server, and backend server.
+   Coordination between client-facing and backend server requires care,
+   as deployment mistakes can lead to compatibility issues.  These are
+   discussed in Section 8.1.
+
+   Beyond coordination difficulties, ECH deployments may also induce
+   challenges for use cases of information that ECH protects.  In
+   particular, use cases which depend on this unencrypted information
+   may no longer work as desired.  This is elaborated upon in
+   Section 8.2.
+
+8.1.  Compatibility Issues
 
    Unlike most TLS extensions, placing the SNI value in an ECH extension
    is not interoperable with existing servers, which expect the value in
@@ -1273,7 +1291,7 @@ Table of Contents
    servers, at the cost of extra round-trips due to a retry.  Two
    specific scenarios are detailed below.
 
-8.1.  Misconfiguration and Deployment Concerns
+8.1.1.  Misconfiguration and Deployment Concerns
 
    It is possible for ECH advertisements and servers to become
    inconsistent.  This may occur, for instance, from DNS
@@ -1298,7 +1316,7 @@ Table of Contents
    attempt to use another server from the DNS results, if one is
    provided.
 
-8.2.  Middleboxes
+8.1.2.  Middleboxes
 
    When connecting through a TLS-terminating proxy that does not support
    this extension, [RFC8446], Section 9.3 requires the proxy still act
@@ -1314,6 +1332,34 @@ Table of Contents
    the retry logic described in Section 6.1.6 or result in a connection
    failure.  A proxy which is not authoritative for the public name
    cannot forge a signal to disable ECH.
+
+8.2.  Deployment Impact
+
+   Some use cases which depend on information ECH encrypts may break
+   with the deployment of ECH.  The extent of breakage depends on a
+   number of external factors, including, for example, whether ECH can
+   be disabled, whether or not the party disabling ECH is trusted to do
+   so, and whether or not client implementations will fall back to TLS
+   without ECH in the event of disablement.
+
+   Depending on implementation details and deployment settings, use
+   cases which depend on plaintext TLS information may require
+   fundamentally different approaches to continue working.  For example,
+   in managed enterprise settings, one approach may be to disable ECH
+   entirely via via group policy and for client implementations to honor
+   this action.  Another approach may be to intercept and decrypt client
+   TLS connections.  The feasibility of alternative solutions is
+   specific to individual deployments.
+
+   In environments where the network operator does not control the
+   endpoint devices, or does controls the endpoint devices but is
+   concerned about the security consequences of compromised devices,
+   e.g., data exfiltration, the SNI field is unsuitable for use as a
+   control even in the absence of ECH.  This is because devices without
+   controls, or which have been compromised, can alter or spoof the
+   value in an SNI field already, and can even bypass security
+   appliances which try to 'double-check' websites hosted by the target
+   server.  ECH does not materially change this situation.
 
 9.  Compliance Requirements
 
