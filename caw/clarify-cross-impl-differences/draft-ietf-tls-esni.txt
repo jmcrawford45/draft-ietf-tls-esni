@@ -5,11 +5,11 @@
 tls                                                          E. Rescorla
 Internet-Draft                                                RTFM, Inc.
 Intended status: Standards Track                                  K. Oku
-Expires: 11 April 2024                                            Fastly
+Expires: 15 April 2024                                            Fastly
                                                              N. Sullivan
                                                               C. A. Wood
                                                               Cloudflare
-                                                          9 October 2023
+                                                         13 October 2023
 
 
                        TLS Encrypted Client Hello
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 April 2024.
+   This Internet-Draft will expire on 15 April 2024.
 
 Copyright Notice
 
@@ -1616,7 +1616,8 @@ Table of Contents
    Moreover, real ECH and GREASE ECH are designed so that the following
    features do not vary:
 
-   1.  the code points of extensions negotiated in the clear;
+   1.  the code points of extensions negotiated in the clear, and their
+       order;
 
    2.  the length of messages; and
 
