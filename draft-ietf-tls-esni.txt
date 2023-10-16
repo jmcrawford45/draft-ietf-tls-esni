@@ -5,11 +5,11 @@
 tls                                                          E. Rescorla
 Internet-Draft                                                RTFM, Inc.
 Intended status: Standards Track                                  K. Oku
-Expires: 15 April 2024                                            Fastly
+Expires: 18 April 2024                                            Fastly
                                                              N. Sullivan
                                                               C. A. Wood
                                                               Cloudflare
-                                                         13 October 2023
+                                                         16 October 2023
 
 
                        TLS Encrypted Client Hello
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 April 2024.
+   This Internet-Draft will expire on 18 April 2024.
 
 Copyright Notice
 
@@ -965,12 +965,21 @@ Table of Contents
    values contains a version supported by the client, the client can
    regard the ECH keys as securely replaced by the server.  It SHOULD
    retry the handshake with a new transport connection, using the retry
-   configurations supplied by the server.  The retry configurations may
-   only be applied to the retry connection.  The client MUST NOT use
-   retry configurations for connections beyond the retry.  This avoids
-   introducing pinning concerns or a tracking vector, should a malicious
-   server present client-specific retry configurations in order to
-   identify the client in a subsequent ECH handshake.
+   configurations supplied by the server.
+
+   Clients can implement a new transport connection in a way that best
+   suits their deployment.  For example, clients can reuse the same IP
+   address when establishing the new transport connection or they can
+   choose to use a different IP address if provided with options from
+   DNS.  ECH does not mandate any specific implementation choices when
+   establishing this new connection.
+
+   The retry configurations may only be applied to the retried
+   connection.  The client MUST NOT use retry configurations for
+   connections beyond the retry.  This avoids introducing pinning
+   concerns or a tracking vector, should a malicious server present
+   client-specific retry configurations in order to identify the client
+   in a subsequent ECH handshake.
 
    If none of the values provided in "retry_configs" contains a
    supported version, or an earlier TLS version was negotiated, the
