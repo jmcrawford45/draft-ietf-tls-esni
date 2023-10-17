@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-10-15T01:07:54.695463+00:00",
+  "timestamp": "2023-10-17T01:04:07.752477+00:00",
   "repo": "tlswg/draft-ietf-tls-esni",
   "labels": [
     {
@@ -11498,15 +11498,15 @@
       "id": "I_kwDOB-yxNc5GU9QJ",
       "title": "How to retry in ECH is ambiguous",
       "url": "https://github.com/tlswg/draft-ietf-tls-esni/issues/524",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "davidben",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Not sure what the right answer is, or whether this belongs in this draft, or some upper layer document. (Alas, though I'm not even sure whether those upper layer documents exist... SVCB? Part of HTTP?) When the recovery flow triggers, we are supposed to \"retry the handshake with a new transport connection\".\r\n\r\nThe transport connection is mostly out of TLS's scope, but _somewhere_ we should decide whether this means...\r\n\r\n* Do you connect with the exact same IP?\r\n* Do you connect with the same SVCB record, but other IPs within that route are in scope?\r\n* Do you connect anew and we just say, meh, this is a recovery mechanism so our aim is just to work most of the time?\r\n* Or maybe we'll learn this is a problem and we need to jam the retry in the same connection (big protocol change, shifts some complexity from upper layers into TLS)\r\n* What happens with proxies, which typically make DNS queries for you? Should we ever decide to integrate SVCB fetching into HTTP CONNECT, the answer here will have implications for that scheme.\r\n\r\nHopefully, with initial experiments, we'll understand this better. But filing this now so we don't forget to address it later.",
       "createdAt": "2022-03-24T18:35:30Z",
-      "updatedAt": "2023-10-11T08:40:34Z",
-      "closedAt": null,
+      "updatedAt": "2023-10-16T13:26:33Z",
+      "closedAt": "2023-10-16T13:26:33Z",
       "comments": [
         {
           "author": "orangepizza",
@@ -52729,24 +52729,26 @@
       "id": "PR_kwDOB-yxNc5cTmGi",
       "title": "Punt on new transport connection specifics",
       "url": "https://github.com/tlswg/draft-ietf-tls-esni/pull/562",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "chris-wood",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Closes #524 \r\n\r\nAs always, happy to take suggestions or alternative PRs.\r\n\r\ncc @dennisjackson, @davidben, @martinthomson ",
       "createdAt": "2023-10-09T22:30:34Z",
-      "updatedAt": "2023-10-12T15:23:29Z",
+      "updatedAt": "2023-10-16T13:26:33Z",
       "baseRepository": "tlswg/draft-ietf-tls-esni",
       "baseRefName": "master",
       "baseRefOid": "86c60ecde2179e54f6e2160cf551c72f0c77b9ce",
       "headRepository": "tlswg/draft-ietf-tls-esni",
       "headRefName": "caw/new-transport-punt",
       "headRefOid": "0a97d054199c463a42258fc2caa3768d03547582",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2023-10-16T13:26:32Z",
+      "mergedAt": "2023-10-16T13:26:32Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "48e5eb62073ad358586a6ad455bdefc5a8ec74c3"
+      },
       "comments": [
         {
           "author": "chris-wood",
@@ -52834,6 +52836,32 @@
               "updatedAt": "2023-10-10T10:36:03Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5kDGgo",
+          "commit": {
+            "abbreviatedOid": "0a97d05"
+          },
+          "author": "kazuho",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-15T01:22:50Z",
+          "updatedAt": "2023-10-15T01:22:50Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5kGBgj",
+          "commit": {
+            "abbreviatedOid": "0a97d05"
+          },
+          "author": "dennisjackson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-16T07:34:37Z",
+          "updatedAt": "2023-10-16T07:34:37Z",
+          "comments": []
         }
       ]
     },
@@ -52917,7 +52945,7 @@
       "labels": [],
       "body": "Closes #513 \r\nCloses #544 \r\n\r\nThe intent here is to punt entirely on the mechanism by which messages between client-facing and backend servers are protected in transit, and simply to state the assumption that these messages do not let the attacker trivially learn information that ECH otherwise protects via encryption. Suggestions for further clarifications are welcome!\r\n\r\ncc @dennisjackson, @davidben, @cjpatton ",
       "createdAt": "2023-10-09T23:06:00Z",
-      "updatedAt": "2023-10-13T22:59:43Z",
+      "updatedAt": "2023-10-15T01:18:24Z",
       "baseRepository": "tlswg/draft-ietf-tls-esni",
       "baseRefName": "master",
       "baseRefOid": "86c60ecde2179e54f6e2160cf551c72f0c77b9ce",
@@ -52951,6 +52979,13 @@
           "body": "> @dennisjackson can I interpret your LGTM as approval?\r\n\r\nYes. My two cents are that thetext is general enough to cover the various issues and specific enough to be easy to understand. ",
           "createdAt": "2023-10-13T11:49:28Z",
           "updatedAt": "2023-10-13T11:49:28Z"
+        },
+        {
+          "author": "kazuho",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@chris-wood Thank you for writing this. The changes look good.",
+          "createdAt": "2023-10-15T01:18:24Z",
+          "updatedAt": "2023-10-15T01:18:24Z"
         }
       ],
       "reviews": [
