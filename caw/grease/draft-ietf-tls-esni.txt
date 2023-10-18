@@ -5,11 +5,11 @@
 tls                                                          E. Rescorla
 Internet-Draft                                                RTFM, Inc.
 Intended status: Standards Track                                  K. Oku
-Expires: 19 April 2024                                            Fastly
+Expires: 20 April 2024                                            Fastly
                                                              N. Sullivan
                                                               C. A. Wood
                                                               Cloudflare
-                                                         17 October 2023
+                                                         18 October 2023
 
 
                        TLS Encrypted Client Hello
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 April 2024.
+   This Internet-Draft will expire on 20 April 2024.
 
 Copyright Notice
 
@@ -2018,11 +2018,18 @@ Table of Contents
 
    This document defines several Reserved values for ECH configuration
    extensions.  These can be used by clients and servers to "grease" the
-   contents of the ECH configuration, as inspired by [RFC8701].
-   Implementations SHOULD select reserved values at random when
-   including them in ECH configurations.  Note that the reserved values
-   with the high-order bit set to 1 are mandatory, as defined in
-   Section 4.2.
+   contents of the ECH configuration, as inspired by [RFC8701].  This
+   helps ensure clients process ECH extensions correctly.  When
+   constructing ECH configurations, servers SHOULD randomly select from
+   reserved values with the high-order bit clear.  Correctly-implemented
+   client will ignore those extensions.
+
+   The reserved values with the high-order bit set are mandatory, as
+   defined in Section 4.2.  Servers SHOULD randomly select from these
+   values and include them in extraneous ECH configurations.  These
+   extraneous ECH configurations SHOULD have invalid keys, and public
+   names which the server does not respond to.  Correctly-implemented
+   clients will ignore these configurations.
 
    The initial contents for this registry consists of multiple reserved
    values, with the following attributes, which are repeated for each
