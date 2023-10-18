@@ -121,21 +121,21 @@ Table of Contents
      11.1.  Update of the TLS ExtensionType Registry
      11.2.  Update of the TLS Alert Registry
      11.3.  ECH Configuration Extension Registry
-   12. ECHConfig Extension Guidance
-   13. References
-     13.1.  Normative References
-     13.2.  Informative References
-   Appendix A.  Linear-time Outer Extension Processing
-   Appendix B.  Acknowledgements
-   Appendix C.  Change Log
-     C.1.  Since draft-ietf-tls-esni-16
-     C.2.  Since draft-ietf-tls-esni-15
-     C.3.  Since draft-ietf-tls-esni-14
-     C.4.  Since draft-ietf-tls-esni-13
-     C.5.  Since draft-ietf-tls-esni-12
-     C.6.  Since draft-ietf-tls-esni-11
-     C.7.  Since draft-ietf-tls-esni-10
-     C.8.  Since draft-ietf-tls-esni-09
+   12. References
+     12.1.  Normative References
+     12.2.  Informative References
+   Appendix A.  ECHConfig Extension Guidance
+   Appendix B.  Linear-time Outer Extension Processing
+   Appendix C.  Acknowledgements
+   Appendix D.  Change Log
+     D.1.  Since draft-ietf-tls-esni-16
+     D.2.  Since draft-ietf-tls-esni-15
+     D.3.  Since draft-ietf-tls-esni-14
+     D.4.  Since draft-ietf-tls-esni-13
+     D.5.  Since draft-ietf-tls-esni-12
+     D.6.  Since draft-ietf-tls-esni-11
+     D.7.  Since draft-ietf-tls-esni-10
+     D.8.  Since draft-ietf-tls-esni-09
    Authors' Addresses
 
 1.  Introduction
@@ -437,7 +437,7 @@ Table of Contents
 4.2.  Configuration Extensions
 
    ECH configuration extensions are used to provide room for additional
-   functionality as needed.  See Section 12 for guidance on which types
+   functionality as needed.  See Appendix A for guidance on which types
    of extensions are appropriate for this structure.
 
    The format is as defined in Section 4 and mirrors Section 4.2 of
@@ -612,7 +612,7 @@ Table of Contents
    Implementations SHOULD bound the time to compute a ClientHelloInner
    proportionally to the ClientHelloOuter size.  If the cost is
    disproportionately large, a malicious client could exploit this in a
-   denial of service attack.  Appendix A describes a linear-time
+   denial of service attack.  Appendix B describes a linear-time
    procedure that may be used for this purpose.
 
 5.2.  Authenticating the ClientHelloOuter
@@ -2014,19 +2014,36 @@ Table of Contents
    The registration policy for for the "ECHConfig Extension Type"
    registry is Specification Required [RFC8126].
 
-12.  ECHConfig Extension Guidance
+   This document defines several Reserved values for ECH configuration
+   extensions.  These can be used by servers to "grease" the contents of
+   the ECH configuration, as inspired by [RFC8701].  This helps ensure
+   clients process ECH extensions correctly.  When constructing ECH
+   configurations, servers SHOULD randomly select from reserved values
+   with the high-order bit clear.  Correctly-implemented client will
+   ignore those extensions.
 
-   Any future information or hints that influence ClientHelloOuter
-   SHOULD be specified as ECHConfig extensions.  This is primarily
-   because the outer ClientHello exists only in support of ECH.  Namely,
-   it is both an envelope for the encrypted inner ClientHello and
-   enabler for authenticated key mismatch signals (see Section 7).  In
-   contrast, the inner ClientHello is the true ClientHello used upon ECH
-   negotiation.
+   The reserved values with the high-order bit set are mandatory, as
+   defined in Section 4.2.  Servers SHOULD randomly select from these
+   values and include them in extraneous ECH configurations.  These
+   extraneous ECH configurations SHOULD have invalid keys, and public
+   names which the server does not respond to.  Correctly-implemented
+   clients will ignore these configurations.
 
-13.  References
+   The initial contents for this registry consists of multiple reserved
+   values, with the following attributes, which are repeated for each
+   registration:
 
-13.1.  Normative References
+   Value:  0x0000, 0x1A1A, 0x2A2A, 0x3A3A, 0x4A4A, 0x5A5A, 0x6A6A,
+      0x7A7A, 0x8A8A, 0x9A9A, 0xAAAA, 0xBABA, 0xCACA, 0xDADA, 0xEAEA,
+      0xFAFA
+   Extension Name:  RESERVED
+   Recommended:  Y
+   Reference:  This document
+   Notes:  None
+
+12.  References
+
+12.1.  Normative References
 
    [ECH-IN-DNS]
               Schwartz, B. M., Bishop, M., and E. Nygren, "Bootstrapping
@@ -2079,7 +2096,7 @@ Table of Contents
               1.3", RFC 9147, DOI 10.17487/RFC9147, April 2022,
               <https://www.rfc-editor.org/rfc/rfc9147>.
 
-13.2.  Informative References
+12.2.  Informative References
 
    [ECH-Analysis]
               "A Symbolic Analysis of Privacy for TLS 1.3 with Encrypted
@@ -2139,7 +2156,17 @@ Table of Contents
               "URL Living Standard - IPv4 Parser", May 2021,
               <https://url.spec.whatwg.org/#concept-ipv4-parser>.
 
-Appendix A.  Linear-time Outer Extension Processing
+Appendix A.  ECHConfig Extension Guidance
+
+   Any future information or hints that influence ClientHelloOuter
+   SHOULD be specified as ECHConfig extensions.  This is primarily
+   because the outer ClientHello exists only in support of ECH.  Namely,
+   it is both an envelope for the encrypted inner ClientHello and
+   enabler for authenticated key mismatch signals (see Section 7).  In
+   contrast, the inner ClientHello is the true ClientHello used upon ECH
+   negotiation.
+
+Appendix B.  Linear-time Outer Extension Processing
 
    The following procedure processes the "ech_outer_extensions"
    extension (see Section 5.1) in linear time, ensuring that each
@@ -2163,7 +2190,7 @@ Appendix A.  Linear-time Outer Extension Processing
        *  Otherwise, the I-th extension of ClientHelloOuter has type E.
           Copy it to the EncodedClientHelloInner and increment I.
 
-Appendix B.  Acknowledgements
+Appendix C.  Acknowledgements
 
    This document draws extensively from ideas in
    [I-D.kazuho-protected-sni], but is a much more limited mechanism
@@ -2172,30 +2199,30 @@ Appendix B.  Acknowledgements
    Nick Sullivan, Martin Thomson, and David Benjamin also provided
    important ideas and contributions.
 
-Appendix C.  Change Log
+Appendix D.  Change Log
 
       *RFC Editor's Note:* Please remove this section prior to
       publication of a final version of this document.
 
    Issue and pull request numbers are listed with a leading octothorp.
 
-C.1.  Since draft-ietf-tls-esni-16
+D.1.  Since draft-ietf-tls-esni-16
 
    *  Keep-alive
 
-C.2.  Since draft-ietf-tls-esni-15
+D.2.  Since draft-ietf-tls-esni-15
 
    *  Add CCS2022 reference and summary (#539)
 
-C.3.  Since draft-ietf-tls-esni-14
+D.3.  Since draft-ietf-tls-esni-14
 
    *  Keep-alive
 
-C.4.  Since draft-ietf-tls-esni-13
+D.4.  Since draft-ietf-tls-esni-13
 
    *  Editorial improvements
 
-C.5.  Since draft-ietf-tls-esni-12
+D.5.  Since draft-ietf-tls-esni-12
 
    *  Abort on duplicate OuterExtensions (#514)
 
@@ -2213,7 +2240,7 @@ C.5.  Since draft-ietf-tls-esni-12
    *  Editorial iprovements (#485, #488, #490, #495, #496, #499, #500,
       #501, #504, #505, #507, #510, #511)
 
-C.6.  Since draft-ietf-tls-esni-11
+D.6.  Since draft-ietf-tls-esni-11
 
    *  Move ClientHello padding to the encoding (#443)
 
@@ -2225,7 +2252,7 @@ C.6.  Since draft-ietf-tls-esni-11
 
    *  Editorial improvements (#468, #465, #462, #461)
 
-C.7.  Since draft-ietf-tls-esni-10
+D.7.  Since draft-ietf-tls-esni-10
 
    *  Make HRR confirmation and ECH acceptance explicit (#422, #423)
 
@@ -2251,7 +2278,7 @@ C.7.  Since draft-ietf-tls-esni-10
 
    *  Editorial improvements (#428, #432, #439, #445, #458, #455)
 
-C.8.  Since draft-ietf-tls-esni-09
+D.8.  Since draft-ietf-tls-esni-09
 
    *  Finalize HPKE dependency (#390)
 
