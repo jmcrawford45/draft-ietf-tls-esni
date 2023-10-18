@@ -372,7 +372,7 @@ Table of Contents
       sequence of ASCII hexadecimal digits (i.e. '0' through '9', 'a'
       through 'f', and 'A' through 'F').  Thus avoids public_name values
       that may be interpreted as IPv4 literals.  Additionally, clients
-      SHOULD ignore the ECHConfig if the length of any label in the DNS
+      MAY ignore the ECHConfig if the length of any label in the DNS
       name is longer than 63 octets, as this is the maximum length of a
       DNS label.
 
