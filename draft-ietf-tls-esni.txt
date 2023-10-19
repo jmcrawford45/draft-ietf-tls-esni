@@ -5,11 +5,11 @@
 tls                                                          E. Rescorla
 Internet-Draft                                                RTFM, Inc.
 Intended status: Standards Track                                  K. Oku
-Expires: 20 April 2024                                            Fastly
+Expires: 21 April 2024                                            Fastly
                                                              N. Sullivan
                                                               C. A. Wood
                                                               Cloudflare
-                                                         18 October 2023
+                                                         19 October 2023
 
 
                        TLS Encrypted Client Hello
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 April 2024.
+   This Internet-Draft will expire on 21 April 2024.
 
 Copyright Notice
 
@@ -370,7 +370,7 @@ Table of Contents
       final LDH label either consists of all ASCII digits (i.e. '0'
       through '9') or is "0x" or "0X" followed by some, possibly empty,
       sequence of ASCII hexadecimal digits (i.e. '0' through '9', 'a'
-      through 'f', and 'A' through 'F').  Thus avoids public_name values
+      through 'f', and 'A' through 'F').  This avoids public_name values
       that may be interpreted as IPv4 literals.  Additionally, clients
       MAY ignore the ECHConfig if the length of any label in the DNS
       name is longer than 63 octets, as this is the maximum length of a
