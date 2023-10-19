@@ -718,7 +718,9 @@ Table of Contents
    5.  It SHOULD place the value of ECHConfig.contents.public_name in
        the "server_name" extension.  Clients that do not follow this
        step, or place a different value in the "server_name" extension,
-       risk breaking the retry mechanism described in Section 6.1.6.
+       risk breaking the retry mechanism described in Section 6.1.6 or
+       failing to interoperate with servers that require this step to be
+       done; see Section 7.1.
 
    6.  When the client offers the "pre_shared_key" extension in
        ClientHelloInner, it SHOULD also include a GREASE
