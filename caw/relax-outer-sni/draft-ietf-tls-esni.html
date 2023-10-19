@@ -2497,48 +2497,48 @@ corresponding to ECHConfig, as follows:<a href="#section-7.1-7" class="pilcrow">
 concatenation "tls ech", a zero byte, and the serialized ECHConfig. If
 decryption fails, the server continues to the next candidate ECHConfig.
 Otherwise, the server reconstructs ClientHelloInner from
-EncodedClientHelloInner, as described in <a href="#encoding-inner" class="auto internal xref">Section 5.1</a>. The server
-SHOULD require that the value in the ClientHelloOuter "server_name" extension
-matches the value of ECHConfig.contents.public_name from the candidate
-ECHConfig, and abort with an "illegal_parameter" alert if these do not match.
-Failure to enforce this check can allow clients to lie about the
-ClientHelloOuter SNI, possibly with the intent of bypassing network policies
-that might otherwise block ECH. Once these checks are complete, the client then
-stops iterating over the candidate ECHConfig values.<a href="#section-7.1-9" class="pilcrow">¶</a></p>
-<p id="section-7.1-10">Upon determining the ClientHelloInner, the client-facing server checks that the
+EncodedClientHelloInner, as described in <a href="#encoding-inner" class="auto internal xref">Section 5.1</a>. It then stops
+iterating over the candidate ECHConfig values.<a href="#section-7.1-9" class="pilcrow">¶</a></p>
+<p id="section-7.1-10">Once the server has chosen the correct ECHConfig, it SHOULD verify that the
+value in the ClientHelloOuter "server_name" extension matches the value of
+<code>ECHConfig.contents.public_name</code>, and abort with an "illegal_parameter" alert
+if these do not match. Failure to enforce this check can allow clients to lie
+about the ClientHelloOuter SNI, possibly with the intent of bypassing network
+policies that might otherwise block ECH.<a href="#section-7.1-10" class="pilcrow">¶</a></p>
+<p id="section-7.1-11">Upon determining the ClientHelloInner, the client-facing server checks that the
 message includes a well-formed "encrypted_client_hello" extension of type
 <code>inner</code> and that it does not offer TLS 1.2 or below. If either of these checks
-fails, the client-facing server MUST abort with an "illegal_parameter" alert.<a href="#section-7.1-10" class="pilcrow">¶</a></p>
-<p id="section-7.1-11">If these checks succeed, the client-facing server then forwards the
+fails, the client-facing server MUST abort with an "illegal_parameter" alert.<a href="#section-7.1-11" class="pilcrow">¶</a></p>
+<p id="section-7.1-12">If these checks succeed, the client-facing server then forwards the
 ClientHelloInner to the appropriate backend server, which proceeds as in
 <a href="#backend-server" class="auto internal xref">Section 7.2</a>. If the backend server responds with a HelloRetryRequest, the
 client-facing server forwards it, decrypts the client's second ClientHelloOuter
 using the procedure in <a href="#client-facing-server-hrr" class="auto internal xref">Section 7.1.1</a>, and forwards the resulting
 second ClientHelloInner. The client-facing server forwards all other TLS
-messages between the client and backend server unmodified.<a href="#section-7.1-11" class="pilcrow">¶</a></p>
-<p id="section-7.1-12">Otherwise, if all candidate ECHConfig values fail to decrypt the extension, the
+messages between the client and backend server unmodified.<a href="#section-7.1-12" class="pilcrow">¶</a></p>
+<p id="section-7.1-13">Otherwise, if all candidate ECHConfig values fail to decrypt the extension, the
 client-facing server MUST ignore the extension and proceed with the connection
-using ClientHelloOuter, with the following modifications:<a href="#section-7.1-12" class="pilcrow">¶</a></p>
+using ClientHelloOuter, with the following modifications:<a href="#section-7.1-13" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-7.1-13.1">
-            <p id="section-7.1-13.1.1">If sending a HelloRetryRequest, the server MAY include an
+<li class="normal" id="section-7.1-14.1">
+            <p id="section-7.1-14.1.1">If sending a HelloRetryRequest, the server MAY include an
 "encrypted_client_hello" extension with a payload of 8 random bytes; see
-<a href="#dont-stick-out" class="auto internal xref">Section 10.10.4</a> for details.<a href="#section-7.1-13.1.1" class="pilcrow">¶</a></p>
+<a href="#dont-stick-out" class="auto internal xref">Section 10.10.4</a> for details.<a href="#section-7.1-14.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.1-13.2">
-            <p id="section-7.1-13.2.1">If the server is configured with any ECHConfigs, it MUST include the
+          <li class="normal" id="section-7.1-14.2">
+            <p id="section-7.1-14.2.1">If the server is configured with any ECHConfigs, it MUST include the
 "encrypted_client_hello" extension in its EncryptedExtensions with the
 "retry_configs" field set to one or more ECHConfig structures with up-to-date
 keys. Servers MAY supply multiple ECHConfig values of different versions.
-This allows a server to support multiple versions at once.<a href="#section-7.1-13.2.1" class="pilcrow">¶</a></p>
+This allows a server to support multiple versions at once.<a href="#section-7.1-14.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-7.1-14">Note that decryption failure could indicate a GREASE ECH extension (see
+<p id="section-7.1-15">Note that decryption failure could indicate a GREASE ECH extension (see
 <a href="#grease-ech" class="auto internal xref">Section 6.2</a>), so it is necessary for servers to proceed with the connection
 and rely on the client to abort if ECH was required. In particular, the
 unrecognized value alone does not indicate a misconfigured ECH advertisement
 (<a href="#misconfiguration" class="auto internal xref">Section 8.1.1</a>). Instead, servers can measure occurrences of the
-"ech_required" alert to detect this case.<a href="#section-7.1-14" class="pilcrow">¶</a></p>
+"ech_required" alert to detect this case.<a href="#section-7.1-15" class="pilcrow">¶</a></p>
 <div id="client-facing-server-hrr">
 <section id="section-7.1.1">
           <h4 id="name-sending-helloretryrequest">
