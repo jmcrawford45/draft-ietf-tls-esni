@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-10-17T01:04:07.752477+00:00",
+  "timestamp": "2023-10-19T01:03:39.391363+00:00",
   "repo": "tlswg/draft-ietf-tls-esni",
   "labels": [
     {
@@ -10959,7 +10959,7 @@
       "id": "MDU6SXNzdWU5MTM4NjEwMzI=",
       "title": "Reserve some code points for GREASE",
       "url": "https://github.com/tlswg/draft-ietf-tls-esni/issues/451",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "davidben",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -10968,8 +10968,8 @@
       ],
       "body": "We should reserve a few extension and ECH version code points for GREASE (perhaps just the same ?a?a pattern). The reserved non-mandatory code points can just be included in valid ECHConfigs, to ensure clients ignore them. The mandatory ones and the reserved versions can be included in ECHConfigLists, to ensure clients can skip over them.",
       "createdAt": "2021-06-07T18:50:42Z",
-      "updatedAt": "2023-10-09T22:47:47Z",
-      "closedAt": null,
+      "updatedAt": "2023-10-18T14:28:18Z",
+      "closedAt": "2023-10-18T14:28:18Z",
       "comments": [
         {
           "author": "chris-wood",
@@ -12088,15 +12088,15 @@
       "id": "I_kwDOB-yxNc5zVg_T",
       "title": "Requirements language around retry configs may be too strong",
       "url": "https://github.com/tlswg/draft-ietf-tls-esni/issues/565",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "chris-wood",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "See [this comment](https://github.com/tlswg/draft-ietf-tls-esni/pull/562/files#r1351063150) and also [this comment](https://github.com/tlswg/draft-ietf-tls-esni/pull/562#discussion_r1351054280).",
       "createdAt": "2023-10-10T10:35:49Z",
-      "updatedAt": "2023-10-10T10:49:09Z",
-      "closedAt": null,
+      "updatedAt": "2023-10-18T14:26:54Z",
+      "closedAt": "2023-10-18T14:26:54Z",
       "comments": [
         {
           "author": "chris-wood",
@@ -12192,16 +12192,82 @@
       "id": "I_kwDOB-yxNc5zqBR-",
       "title": "Make anonymity set references consistent (reference single definition?)",
       "url": "https://github.com/tlswg/draft-ietf-tls-esni/issues/568",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "klinvill",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "As mentioned in #560, there's slightly different language when referencing anonymity sets. Specifically, the Introduction mentions that co-located servers with `consistent externally visible TLS configurations` form an anonymity set. The Security and Privacy Goals section states that `The set of hosts which share the same ECHConfig and TLS configuration is referred to as the anonymity set`. To me there's a subtle difference here in that I understand the `externally visible TLS configurations` is meant to apply to all externally observable behavior, but my impression when just seeing `ECHConfig and TLS configuration` is that these are referring to user-provided TLS configurations which don't encompass all externally observable behavior.\r\n\r\nOne way to fix this is simply to make the phrasing consistent, but I think it would be even nicer to have the term `anonymity set` clearly defined in a single, easily accessible location since it's central to the precise guarantees ECH aims to provide. Maybe it could be explicitly defined in the Conventions and Definitions section? Given a canonical definition, further usages of the anonymity set could just refer to that definition.\r\n\r\nMaybe other significant terms like Client-Facing Server could also be defined in a similar location too? ",
       "createdAt": "2023-10-12T16:48:15Z",
-      "updatedAt": "2023-10-12T16:48:15Z",
-      "closedAt": null,
+      "updatedAt": "2023-10-18T14:26:45Z",
+      "closedAt": "2023-10-18T14:26:45Z",
       "comments": []
+    },
+    {
+      "number": 572,
+      "id": "I_kwDOB-yxNc50IpRR",
+      "title": "Are we quite right now with \"MUST use public_name\"?",
+      "url": "https://github.com/tlswg/draft-ietf-tls-esni/issues/572",
+      "state": "OPEN",
+      "author": "sftcd",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The spec currently says:\r\n\r\n'The value of ECHConfig.contents.public_name MUST be placed in the  \"server_name\" extension.'\r\n\r\nI've never been fond of that, but I think it's also overly restrictive. For example, tests I've done with my and others' servers indicate that servers do not insist on this, if ECH decryption worked, and I think the code is doing the right thing there.\r\n\r\nI've also included the capability for a command-line override of public_name (in the outer SNI) in the cURL code I've proposed to that project. The logic there is that could be useful for some circumvention applications in future - I don't know that is or will be true, but it seems good to preserve the flexibility. (That said only my client library code seems to have an API that allows that override as of now.)\r\n\r\nSo I'd suggest we modify the MUST quoted above and add a SHOULD NOT (or make any equivalent change), to e.g.:\r\n\r\n- Clients SHOULD place the ECHConfig.contents.public_name in the (outer) server_name extension, unless specifically overridden by application layer code\r\n- In the event of successful ECH decryption, servers SHOULD NOT insist that the outer server_name extension carries the public_name from an ECHConfig corresponding to the relevant ECH decryption key.\r\n\r\nI don't think we need to say anything new on this topic related to ECH decryption failures.\r\n",
+      "createdAt": "2023-10-17T22:54:31Z",
+      "updatedAt": "2023-10-19T01:01:16Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This is a dupe of #396, which we already closed in the past, perhaps maybe prematurely. Relaxing this to a SHOULD NOT would effectively reintroduce domain fronting, which is not something I think we want to encourage. If anything, I would suggest that servers willing to accept the risk of not enforcing this MUST opt in via an ECHConfig extension.",
+          "createdAt": "2023-10-18T14:33:31Z",
+          "updatedAt": "2023-10-18T14:33:31Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Looking back at #396 (which I'd forgotten was an issue on here, sorry;-) I don't think it was clear that a MUST (as we have now) was really preferred over a SHOULD. \r\n\r\nThe suggested SHOULD NOT for servers above is based on just testing what the ones I know of, do now. (And of course it matches what I'd like too:-)\r\n\r\nI've no preference as to whether to close this and re-open #396 or not but I do think it's worth revisiting/rechecking this topic before we're done.",
+          "createdAt": "2023-10-18T15:27:12Z",
+          "updatedAt": "2023-10-18T15:27:12Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Based on your testing, what server implementations do not enforce this requirement?",
+          "createdAt": "2023-10-18T17:32:00Z",
+          "updatedAt": "2023-10-18T17:32:00Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "All few of them. Meaning those using my OpenSSL fork, those using CF's server code and tls-ech.dev which uses boringssl. I [added](https://github.com/sftcd/curl/commit/026f12e0aa93150ef31a177d50116ef2794d9d6e) some tests for this to my [cURL test script](https://github.com/sftcd/curl/blob/ECH-experimental/tests/ech_tests.sh). I checked with wireshark that the outer SNI was as expected (value == \"override\") when sending to CF.\r\n\r\nIf anyone knows of additional servers to add to test, I'd be happy to add 'em to my list.",
+          "createdAt": "2023-10-18T18:45:22Z",
+          "updatedAt": "2023-10-18T18:59:18Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "If the connection works without one sure.  But there are two reasons that a client might want to include a public name.\r\n\r\n1. The server just doesn't work without one.  I can easily imagine a server implementation that routes to ECH logic based on the public SNI and fails otherwise.\r\n2. Fallback.  \r\n\r\nMaybe you can argue that a server can execute fallback with the public name without the client telling it what that public name is.  So maybe this is just one reason.\r\n\r\nWith a single reason you could imagine allowing the public name to be empty in the config.  The problem there would be if there is some sort of system that depends on having an SNI, which is likely.  In that case, you could use a fixed string instead.",
+          "createdAt": "2023-10-19T00:57:42Z",
+          "updatedAt": "2023-10-19T00:57:42Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "No, the argument here is not to omit the public_name, but rather to say, for clients, the outer SNI SHOULD be the public_name, and for servers, when ECH decryption worked, they SHOULD NOT care. When ECH decryption fails, then using the public_name will get better interop, hence the SHOULD for clients.",
+          "createdAt": "2023-10-19T00:59:23Z",
+          "updatedAt": "2023-10-19T00:59:23Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">  and for servers, when ECH decryption worked, they SHOULD NOT care\r\n\r\nThis just isn't true. Servers will care about this because, again, not caring about it just opens up the door to effectively domain front.",
+          "createdAt": "2023-10-19T01:01:15Z",
+          "updatedAt": "2023-10-19T01:01:15Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -53257,6 +53323,435 @@
               "updatedAt": "2023-10-13T13:34:27Z"
             }
           ]
+        }
+      ]
+    },
+    {
+      "number": 569,
+      "id": "PR_kwDOB-yxNc5dEbyK",
+      "title": "Initial grease codepoints",
+      "url": "https://github.com/tlswg/draft-ietf-tls-esni/pull/569",
+      "state": "MERGED",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #451 \r\n\r\ncc @davidben, @dennisjackson, @cjpatton ",
+      "createdAt": "2023-10-17T22:27:25Z",
+      "updatedAt": "2023-10-18T14:28:17Z",
+      "baseRepository": "tlswg/draft-ietf-tls-esni",
+      "baseRefName": "master",
+      "baseRefOid": "48e5eb62073ad358586a6ad455bdefc5a8ec74c3",
+      "headRepository": "tlswg/draft-ietf-tls-esni",
+      "headRefName": "caw/grease",
+      "headRefOid": "716bf47595ae6ae74e3ae295b3677ec63728c73d",
+      "closedAt": "2023-10-18T14:28:16Z",
+      "mergedAt": "2023-10-18T14:28:16Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "539eab81d53815f09b7c70c3ee13960da0e977eb"
+      },
+      "comments": [
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "What's the expected behaviour of an ECHConfig generator that wants to include a \"mandatory\" GREASE ECH extension in an HTTTPS RR? If it really ought to include >1 entry in the ECHConfigList in that case (incl. one without that mandatory GREASE ECH extension) then we should say that. (Better would be to get rid of these mandatory extensions IMO, but that's a different topic.)\r\n",
+          "createdAt": "2023-10-17T22:35:33Z",
+          "updatedAt": "2023-10-17T22:35:33Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I don't think there are any expected behaviors for config generators -- they can put as many greased values in the thing as they want. ",
+          "createdAt": "2023-10-17T22:37:43Z",
+          "updatedAt": "2023-10-17T22:37:43Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "But then doesn't that mean that all consumers of ECHConfig values MUST know about the GREASE values and ignore those with the mandatory bit set? Don't we need to say that?",
+          "createdAt": "2023-10-17T22:38:30Z",
+          "updatedAt": "2023-10-17T22:38:30Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I don't think it needs to be explicit. If the client knows it's a grease value, then it will recognize the mandatory bit and \"ignore\" it as desired (it understands that the extension value is grease), but if it doesn't know it's a grease value then it'll drop the config.",
+          "createdAt": "2023-10-17T22:43:18Z",
+          "updatedAt": "2023-10-17T22:43:18Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Right, if the client drops the config then things break unless the ECHConfig generator made a list where one doesn't have the \"mandatory\" GREASE codepoint. I think the text as-is is likely to leave a crack into which what may be different sets of implementers may fall, causing interop issues. ",
+          "createdAt": "2023-10-17T22:58:31Z",
+          "updatedAt": "2023-10-17T22:58:31Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@sftcd feel free to suggest text if you think it's warranted. I'm OK with the text as-is.",
+          "createdAt": "2023-10-17T23:09:42Z",
+          "updatedAt": "2023-10-17T23:09:42Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Sure, I'd add \"Clients MUST know of, and ignore, all these codepoints, including those with the high-order bit set.\" ",
+          "createdAt": "2023-10-17T23:12:04Z",
+          "updatedAt": "2023-10-17T23:12:04Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Sorry if the above is better supplied some other way, but not sure if you do/don't want 2119 terms in IANA considerations which'd affect where the suggested sentence goes maybe.",
+          "createdAt": "2023-10-17T23:14:02Z",
+          "updatedAt": "2023-10-17T23:14:02Z"
+        },
+        {
+          "author": "kazuho",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@sftcd \r\n> Sure, I'd add \"Clients MUST know of, and ignore, all these codepoints, including those with the high-order bit set.\"\r\n\r\nOr, we could add something like \"Some extension IDs are reserved for greasing; clients MUST ignore them\" to the [last paragraph of Section 4.2](https://tlswg.org/draft-ietf-tls-esni/draft-ietf-tls-esni.html#section-4.2-3). That's where we define how the client parses all the extensions.",
+          "createdAt": "2023-10-18T00:49:07Z",
+          "updatedAt": "2023-10-18T00:49:07Z"
+        },
+        {
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Requiring clients know about grease values would be counterproductive and defeat the point of greasing. Indeed, we specifically *want* the high-order bit values to be treated as unrecognized mandatory extensions. This way config generators can ensure clients actually implement this correctly! Add a bunch of garbage ECHConfigs with unrecognized mandatory configs to make sure clients exercise skipping it.",
+          "createdAt": "2023-10-18T02:24:22Z",
+          "updatedAt": "2023-10-18T02:24:22Z"
+        },
+        {
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "body": "That is, the current text is fine and we **_definitely_** should not use the suggested replacement. I'll add a suggestion for a sentence or two, since it sounds like the implications of \"Note that the reserved values with the high-order bit set to 1 are mandatory, as defined in {{config-extensions}}\" are not obvious.",
+          "createdAt": "2023-10-18T02:28:30Z",
+          "updatedAt": "2023-10-18T02:28:39Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5kXNLe",
+          "commit": {
+            "abbreviatedOid": "1a5353e"
+          },
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-18T02:31:16Z",
+          "updatedAt": "2023-10-18T02:37:34Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\nECH configuration, as inspired by {{?RFC8701}}. This helps ensure clients\r\nprocess ECH extensions correctly. When constructing ECH configurations,\r\nservers SHOULD randomly select from reserved values with the high-order\r\nbit clear. Correctly-implemented client will ignore those extensions.\r\n\r\nThe reserved values with the high-order bit set are mandatory, as defined\r\nin {{config-extensions}}. Servers SHOULD randomly select from these\r\nvalues and include them in extraneous ECH configurations. These\r\nextraneous ECH configurations SHOULD have invalid keys, and public\r\nnames which the server does not respond to. Correctly-implemented\r\nclients will ignore these configurations.\r\n```",
+              "createdAt": "2023-10-18T02:34:45Z",
+              "updatedAt": "2023-10-18T02:37:34Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "Clients don't actually send these, so I think this should be:\r\n\r\n```suggestion\r\nThese can be used by servers to \"grease\" the contents of the\r\n```",
+              "createdAt": "2023-10-18T02:35:46Z",
+              "updatedAt": "2023-10-18T02:37:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5ka7gQ",
+          "commit": {
+            "abbreviatedOid": "1a5353e"
+          },
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-18T11:12:20Z",
+          "updatedAt": "2023-10-18T11:12:21Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Actually, it's the ECHConfig generator not the TLS server that does this.",
+              "createdAt": "2023-10-18T11:12:21Z",
+              "updatedAt": "2023-10-18T11:12:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5ka9In",
+          "commit": {
+            "abbreviatedOid": "1a5353e"
+          },
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-18T11:16:12Z",
+          "updatedAt": "2023-10-18T11:16:13Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "I'd be fine with spelling stuff out for the ECHConfig generator. I dunno why \"extraneous\" is a SHOULD though, nor why invalid key values are better? I'd need to think whether or not inventing random public_name values is a good idea.",
+              "createdAt": "2023-10-18T11:16:12Z",
+              "updatedAt": "2023-10-18T11:16:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5ka9hZ",
+          "commit": {
+            "abbreviatedOid": "1a5353e"
+          },
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-18T11:17:09Z",
+          "updatedAt": "2023-10-18T11:17:09Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Well, unless we're expecting to GREASE retry_configs? I'd not thought about that.",
+              "createdAt": "2023-10-18T11:17:09Z",
+              "updatedAt": "2023-10-18T11:17:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5kbSEf",
+          "commit": {
+            "abbreviatedOid": "1a5353e"
+          },
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-18T12:03:08Z",
+          "updatedAt": "2023-10-18T12:03:08Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "Ah, I guess you want a random key so decryption definitely fails. That seems reasonable. Still not sure about a random public_name though. In any case, some text like this is needed and shows I guess that GREASEing that mandatory bit requires an additional ~70 octets.\r\n",
+              "createdAt": "2023-10-18T12:03:08Z",
+              "updatedAt": "2023-10-18T12:03:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5kcejZ",
+          "commit": {
+            "abbreviatedOid": "1a5353e"
+          },
+          "author": "davidben",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-18T14:05:13Z",
+          "updatedAt": "2023-10-18T14:05:14Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "Junk public name is so we don't mask the decryption failure with the recovery flow. Don't think it needs to be random though. `ech.invalid` is probably good enough. :-)\r\n\r\nNo strong feelings about SHOULD or MAY or whatever. This is a bit heavier, so downgrading the shouty verb seems reasonable I suppose.",
+              "createdAt": "2023-10-18T14:05:14Z",
+              "updatedAt": "2023-10-18T14:05:14Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 570,
+      "id": "PR_kwDOB-yxNc5dEdNy",
+      "title": "Relax requirements around retry config usage",
+      "url": "https://github.com/tlswg/draft-ietf-tls-esni/pull/570",
+      "state": "MERGED",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #565 \r\n\r\ncc @davidben, @dennisjackson, @martinthomson",
+      "createdAt": "2023-10-17T22:33:26Z",
+      "updatedAt": "2023-10-18T14:26:53Z",
+      "baseRepository": "tlswg/draft-ietf-tls-esni",
+      "baseRefName": "master",
+      "baseRefOid": "48e5eb62073ad358586a6ad455bdefc5a8ec74c3",
+      "headRepository": "tlswg/draft-ietf-tls-esni",
+      "headRefName": "caw/relax-retry",
+      "headRefOid": "3b2d64cef6a5279e95dcdb2995ff694afe6dc3f0",
+      "closedAt": "2023-10-18T14:26:53Z",
+      "mergedAt": "2023-10-18T14:26:53Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "0cfcb8e06d582617e1520e2054c2ab9f482e5735"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5kWgx7",
+          "commit": {
+            "abbreviatedOid": "3b2d64c"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-17T23:17:09Z",
+          "updatedAt": "2023-10-17T23:17:09Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 571,
+      "id": "PR_kwDOB-yxNc5dEf_y",
+      "title": "Only one anonymity set definition",
+      "url": "https://github.com/tlswg/draft-ietf-tls-esni/pull/571",
+      "state": "MERGED",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #568 \r\n\r\ncc @klinvill, @davidben, @dennisjackson ",
+      "createdAt": "2023-10-17T22:43:46Z",
+      "updatedAt": "2023-10-18T14:26:44Z",
+      "baseRepository": "tlswg/draft-ietf-tls-esni",
+      "baseRefName": "master",
+      "baseRefOid": "48e5eb62073ad358586a6ad455bdefc5a8ec74c3",
+      "headRepository": "tlswg/draft-ietf-tls-esni",
+      "headRefName": "caw/anon-set",
+      "headRefOid": "7b1553927ed65089cbaaa9f5e395afce35ddeebc",
+      "closedAt": "2023-10-18T14:26:44Z",
+      "mergedAt": "2023-10-18T14:26:44Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "94b56163c1bc9852b2abae2c44ed8d554a8b1738"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5kW0LF",
+          "commit": {
+            "abbreviatedOid": "7b15539"
+          },
+          "author": "kazuho",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-18T00:55:22Z",
+          "updatedAt": "2023-10-18T00:55:22Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 573,
+      "id": "PR_kwDOB-yxNc5dEk1Z",
+      "title": "Limit DNS label length",
+      "url": "https://github.com/tlswg/draft-ietf-tls-esni/pull/573",
+      "state": "MERGED",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "cc @davidben, @dennisjackson, @martinthomson ",
+      "createdAt": "2023-10-17T23:04:52Z",
+      "updatedAt": "2023-10-18T14:26:33Z",
+      "baseRepository": "tlswg/draft-ietf-tls-esni",
+      "baseRefName": "master",
+      "baseRefOid": "b04619b5218c2857816c24a87f70d97471c66f54",
+      "headRepository": "tlswg/draft-ietf-tls-esni",
+      "headRefName": "caw/limit-dns-labels",
+      "headRefOid": "44e73b06de55b2bce91edba8fefc25d6718f61f4",
+      "closedAt": "2023-10-18T14:26:33Z",
+      "mergedAt": "2023-10-18T14:26:33Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "a8009ce64b1982429ac0dd9845b34a5ae3cb3b4a"
+      },
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm OK with MAY (and would also be OK with a MUST, heh).",
+          "createdAt": "2023-10-18T14:26:29Z",
+          "updatedAt": "2023-10-18T14:26:29Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5kWho9",
+          "commit": {
+            "abbreviatedOid": "3ebe2fa"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "Why \"SHOULD\" and not \"MUST\"?\r\n\r\nPersonally, I wouldn't bother implementing this check. The server won't be able to obtain a valid certificate for a name that violates this constraint, or -- if it can -- you are trusting it based on a bogus root certificate.  So this doesn't really help.  It doesn't hurt either, but I'm not sure that you need defense in depth.  That suggests \"MAY\" instead.",
+          "createdAt": "2023-10-17T23:19:47Z",
+          "updatedAt": "2023-10-17T23:19:47Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5kcsdu",
+          "commit": {
+            "abbreviatedOid": "265412f"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-18T14:25:52Z",
+          "updatedAt": "2023-10-18T14:25:52Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\ninterpreted as IPv4 literals. Additionally, clients MAY ignore the\r\n```",
+              "createdAt": "2023-10-18T14:25:52Z",
+              "updatedAt": "2023-10-18T14:26:06Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 574,
+      "id": "PR_kwDOB-yxNc5dGJ3k",
+      "title": "Avoid a normative reference to WHATWG-IPV4",
+      "url": "https://github.com/tlswg/draft-ietf-tls-esni/pull/574",
+      "state": "MERGED",
+      "author": "davidben",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "DNS names and IPv4 literals are a bit of a mess. RFC 1738 said:\r\n\r\n> The rightmost domain label will never start with a digit, though,\r\n> which syntactically distinguishes all domain names from the IP\r\n> addresses.\r\n\r\nThis is sensible, but was replaced by RFC 3986 with a \"first-match-wins\" algorithm:\r\n\r\n> If host matches the rule for IPv4address, then it should be\r\n> considered an IPv4 address literal and not a reg-name.\r\n\r\nThe WHATWG URL spec originally mirrored this, but with a *much* more permissive IPv4 parser, to reflect reality. ECH originally cited this, to be sure we don't accidentally mix up IPv4 literals and DNS names.\r\n\r\nThe change in RFC 3986 was a mistake and introduced a security problem. The RFC 1738 formulation said a.1.2.3.4 was a syntax error, neither a DNS name nor IPv4 literal. The RFC 3986, along with the analog copied into WHATWG, says it's a DNS name because the IPv4 parser rejects it. But this means:\r\n\r\n- a.1.2.3.4 is a DNS name\r\n- 1.2.3.4 is an IPv4 literal\r\n\r\nSee also https://github.com/whatwg/url/issues/560\r\n\r\nThis means DNS names are no longer closed under suffixes! This causes problems for any systems (e.g. eTLD+1s) that need to suffix a DNS name. WHATWG since effectively reverted the RFC 3986 mistake. After https://github.com/whatwg/url/commit/ab0e820b0b559610b30c731b7f2c1a8094181680, the rule in WHATWG is: if it ends in a number (all digits, or 0x + all hex), parse as an IPv4 literal. Otherwise it's a DNS name.\r\n\r\nThis rule is finally simple enough that we can just lift it into ECH.\r\n\r\n(If we want, we can simplify this by just reverting to the RFC 1738 formulation, which should be safe in this context. It is a pity RFC 3986 made a mess here.)",
+      "createdAt": "2023-10-18T06:00:45Z",
+      "updatedAt": "2023-10-18T14:24:06Z",
+      "baseRepository": "tlswg/draft-ietf-tls-esni",
+      "baseRefName": "master",
+      "baseRefOid": "48e5eb62073ad358586a6ad455bdefc5a8ec74c3",
+      "headRepository": "davidben/draft-ietf-tls-esni",
+      "headRefName": "ipv4",
+      "headRefOid": "2660209e03b2d7f9c6db9cc9a70c65978914da0d",
+      "closedAt": "2023-10-18T14:24:06Z",
+      "mergedAt": "2023-10-18T14:24:06Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "b04619b5218c2857816c24a87f70d97471c66f54"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5kcrZ0",
+          "commit": {
+            "abbreviatedOid": "2660209"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-18T14:24:01Z",
+          "updatedAt": "2023-10-18T14:24:01Z",
+          "comments": []
         }
       ]
     }
