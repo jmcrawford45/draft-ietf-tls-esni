@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-10-19T01:03:39.391363+00:00",
+  "timestamp": "2023-10-22T01:08:00.266661+00:00",
   "repo": "tlswg/draft-ietf-tls-esni",
   "labels": [
     {
@@ -12215,7 +12215,7 @@
       "labels": [],
       "body": "The spec currently says:\r\n\r\n'The value of ECHConfig.contents.public_name MUST be placed in the  \"server_name\" extension.'\r\n\r\nI've never been fond of that, but I think it's also overly restrictive. For example, tests I've done with my and others' servers indicate that servers do not insist on this, if ECH decryption worked, and I think the code is doing the right thing there.\r\n\r\nI've also included the capability for a command-line override of public_name (in the outer SNI) in the cURL code I've proposed to that project. The logic there is that could be useful for some circumvention applications in future - I don't know that is or will be true, but it seems good to preserve the flexibility. (That said only my client library code seems to have an API that allows that override as of now.)\r\n\r\nSo I'd suggest we modify the MUST quoted above and add a SHOULD NOT (or make any equivalent change), to e.g.:\r\n\r\n- Clients SHOULD place the ECHConfig.contents.public_name in the (outer) server_name extension, unless specifically overridden by application layer code\r\n- In the event of successful ECH decryption, servers SHOULD NOT insist that the outer server_name extension carries the public_name from an ECHConfig corresponding to the relevant ECH decryption key.\r\n\r\nI don't think we need to say anything new on this topic related to ECH decryption failures.\r\n",
       "createdAt": "2023-10-17T22:54:31Z",
-      "updatedAt": "2023-10-19T01:01:16Z",
+      "updatedAt": "2023-10-19T01:06:03Z",
       "closedAt": null,
       "comments": [
         {
@@ -12266,6 +12266,27 @@
           "body": ">  and for servers, when ECH decryption worked, they SHOULD NOT care\r\n\r\nThis just isn't true. Servers will care about this because, again, not caring about it just opens up the door to effectively domain front.",
           "createdAt": "2023-10-19T01:01:15Z",
           "updatedAt": "2023-10-19T01:01:15Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "If a server cares, that's fine. Saying all servers MUST care seem wrong. Esp since none currently seem to care.",
+          "createdAt": "2023-10-19T01:04:21Z",
+          "updatedAt": "2023-10-19T01:04:21Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> If a server cares, that's fine. Saying all servers MUST care seem wrong. Esp since none currently seem to care.\r\n\r\nI agree with this. I would be fine just relaxing this MUST to a SHOULD and describing the consequences of not enforcing this check for clients and servers.",
+          "createdAt": "2023-10-19T01:05:22Z",
+          "updatedAt": "2023-10-19T01:05:22Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'd be ok with that.",
+          "createdAt": "2023-10-19T01:06:02Z",
+          "updatedAt": "2023-10-19T01:06:02Z"
         }
       ]
     }
@@ -53751,6 +53772,269 @@
           "body": "",
           "createdAt": "2023-10-18T14:24:01Z",
           "updatedAt": "2023-10-18T14:24:01Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 575,
+      "id": "PR_kwDOB-yxNc5dUGrb",
+      "title": "Relax requirements around the outer SNI value",
+      "url": "https://github.com/tlswg/draft-ietf-tls-esni/pull/575",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #572 \r\n\r\ncc @dennisjackson, @davidben, @martinthomson, @cjpatton, @sftcd ",
+      "createdAt": "2023-10-19T20:29:11Z",
+      "updatedAt": "2023-10-20T20:53:31Z",
+      "baseRepository": "tlswg/draft-ietf-tls-esni",
+      "baseRefName": "master",
+      "baseRefOid": "539eab81d53815f09b7c70c3ee13960da0e977eb",
+      "headRepository": "tlswg/draft-ietf-tls-esni",
+      "headRefName": "caw/relax-outer-sni",
+      "headRefOid": "33d4163c47a93f85b73ac673cdf67883f0ba0f73",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "ekr",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I don't think this quite works. As I understand it, we:\r\n\r\n1. Are silent on what clients have to do, but just tell them \"this may not work\" if you don't make the names match, but only for the retry mechanism.\r\n2. We tell the servers that they SHOULD check that the names match.\r\n\r\nThe result here is that a conformant client can fail to interoperate with a server that behaves as we RECOMMEND. That seems bad.\r\n\r\n\r\n",
+          "createdAt": "2023-10-19T20:40:18Z",
+          "updatedAt": "2023-10-19T20:40:18Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I thought the silence was to be interpreted as a SHOULD, but I would be fine to explicitly say that. ",
+          "createdAt": "2023-10-19T20:59:43Z",
+          "updatedAt": "2023-10-19T20:59:43Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm fine with the change from MUST to SHOULD for the client, and I think calling out the SHOULD for clients as in the most recent commit is better than omitting 2119 terms for that.\r\n\r\nThe addition of a SHOULD for servers is wrong. (I would prefer a SHOULD NOT for servers but am ok with less.) The ECH protocol works fine without that, (unlike the reasonable SHOULD for clients related to fallback), so I'd at most be ok with a MAY for servers. Noting that servers that do not enforce that that check (the behaviour or all servers I've tested so far)  has consequences is fine, but there's no need to add a SHOULD recommending making that check. ",
+          "createdAt": "2023-10-19T23:47:51Z",
+          "updatedAt": "2023-10-19T23:47:51Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The addition of a SHOULD for servers is wrong. (I would prefer a SHOULD NOT for servers but am ok with less.) The ECH protocol works fine without that, (unlike the reasonable SHOULD for clients related to fallback), so I'd at most be ok with a MAY for servers. Noting that servers that do not enforce that that check (the behaviour or all servers I've tested so far)  has consequences is fine, but there's no need to add a SHOULD recommending making that check. \n\nIt's not wrong -- it just doesn't match what you'd like. As has been clearly stated, failure to implement this check admits domain fronting. The normative language is here to discourage that behavior for servers. \n",
+          "createdAt": "2023-10-19T23:56:40Z",
+          "updatedAt": "2023-10-19T23:56:40Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "What's \"wrong\" is certainly debatable. However, while there may be good or bad reasons to (dis)like domain fronting, making this check a SHOULD is not necessary to make the ECH protocol to work. That's (I claim, not that strongly) demonstrated as current servers do not make that check.",
+          "createdAt": "2023-10-19T23:58:58Z",
+          "updatedAt": "2023-10-19T23:58:58Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It's not just about making things work. It's incumbent on us to write the spec in a way that discourages undesirable outcomes. ",
+          "createdAt": "2023-10-20T00:02:29Z",
+          "updatedAt": "2023-10-20T00:02:29Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "OK, so we seem to agree that server-side check is not necessary to make the protocol work.\r\n\r\nIt's not clear to me we that we on here (or the TLS WG) have rough consensus as to the desirability of encouraging implementations to make domain fronting less or more possible. Deployments can of course validly make such choices, but that's different from a SHOULD that recommends that implementations make that choice for those deploying the protocol.\r\n\r\nSo overall it seems to me the spec here is better saying that servers MAY make such checks, calling out the consequences, but no more.",
+          "createdAt": "2023-10-20T00:07:39Z",
+          "updatedAt": "2023-10-20T00:07:39Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Implementations can of course make a decision as they see fit, which is precisely why this is phrased in the way it is. That said, I don't have any interest in debating what is the right verb to use here. ",
+          "createdAt": "2023-10-20T00:14:02Z",
+          "updatedAt": "2023-10-20T00:14:02Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I do have such a verbal interest:-) That;s a 2119 verb, so a SHOULD implies (to me) that servers really ought have code to make that check and send that error, which I think is a less good outcome.",
+          "createdAt": "2023-10-20T00:19:30Z",
+          "updatedAt": "2023-10-20T00:19:30Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "So here's a different argument against such a SHOULD for the server-side check. Not hugely strong, but worth thinking about.\r\n\r\nSay a server supports thousands of public_names but very few ECH private keys. That will create config_id collisions and likely lead to erroneous protocol failures if the server-side SHOULD check we're discussing is enforced, especially if/as public_name values change and servers and clients are or are not up to date with the latest settings.\r\n\r\nI'm not claiming that's a winning argument, but it's worth pondering as the (un)desirability of domain fronting may not be the only thing in play here.",
+          "createdAt": "2023-10-20T00:25:14Z",
+          "updatedAt": "2023-10-20T00:25:14Z"
+        },
+        {
+          "author": "ekr",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Some further thoughts.\r\n\r\n1. I don't find the domain fronting argument for requiring this check on the server to be very persuasive. Why is ECH the right place for the TLS WG to take a position on this, even assuming we have consensus to do so?\r\n\r\n2. ISTM that the stronger rationale for this check is that (1) clients which don't out the correct value in ClientHelloOuter will not interoperate properly in case of the need for fallback (2) fallback will be uncommon and so this is unlikely to be detected in normal operation (3) the check ensures that clients do the right thing (this is the argument of RFC 9413). From this perspective, @sftcd's observation that nothing untoward has happened from existing server's failure to check doesn't tell us much, because it's in the nature of this kind of issue that nonconformance is mostly not a problem until it is, at which point it is hard to repair. \r\n\r\n3. I still don't think that the SHOULD/SHOULD combination works because, as noted before, RFC 2119 allows for implementations to violate SHOULDs and we don't really provide reasons why this might be OK in this case. I think the following combinations are reasonable (I.e., they provide interoperability by conformant implementations):\r\n\r\n* MUST send and any behavior by the server\r\n* MUST send unless you have some out of band reason to know that the server doesn't check and that it won't do fallback, combined with any behavior on the server.\r\n* Any behavior by the client combined with MUST ignore on the server\r\n\r\nWith that said, for the RFC 9413 reasons above, I believe we should require the client to send and encourage the server to check. I could be persuaded to have an exception for clients who have some out of band reason to believe that the server doesn't want it, as in my second option above.\r\n",
+          "createdAt": "2023-10-20T13:50:50Z",
+          "updatedAt": "2023-10-20T13:50:50Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> With that said, for the RFC 9413 reasons above, I believe we should require the client to send and encourage the server to check. I could be persuaded to have an exception for clients who have some out of band reason to believe that the server doesn't want it, as in my second option above.\n\nThe intent of the PR is exactly this. It requires clients to do this, with exceptions (hence the SHOULD), and encourages servers to check (hence the SHOULD). It's possible there are better ways to phrase it, but that's the goal here. ",
+          "createdAt": "2023-10-20T14:02:58Z",
+          "updatedAt": "2023-10-20T14:02:58Z"
+        },
+        {
+          "author": "ekr",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks. In that case, I don't think that the \"if you don't do this these are the consequences\" works. Rather it actually needs to be a MUST and lay out the specific conditions under which clients can violate that MUST. E.g.,\r\n\r\n\"It MUST place the value of `ECHConfig.contents.public_name` in the\r\n   \"server_name\" extension unless it has a specific reason to know that\r\n   the server in question does not implement the retry\r\n   mechanism described in {{rejected-ech}} and does not enforce the\r\n  above requirement {{client-facing-server}}.\"",
+          "createdAt": "2023-10-20T14:27:31Z",
+          "updatedAt": "2023-10-20T14:27:31Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> \"It MUST place the value of `ECHConfig.contents.public_name` in the\r\n> \"server_name\" extension unless it has a specific reason to know that\r\n> the server in question does not implement the retry\r\n> mechanism described in {{rejected-ech}} and does not enforce the\r\n> above requirement {{client-facing-server}}.\"\r\n\r\nI don't think the above quite makes sense, because the client (as a \r\nTLS library) won't know things, in particular cannot know what the \r\nserver may or may not check and, once a correct ECHConfig is used,\r\nand ECH decryption has succeeded, the retry scheme doesn't come\r\ninto play so there's no benefit to the server in that case in making\r\nthe check.\r\n\r\nI'm fine with a SHOULD (or \"MUST ... unless\") for clients, but the \r\n\"unless\" clause above seems wrong. How would this be?\r\n\r\n'Clients SHOULD place the the value of `ECHConfig.contents.public_name`\r\nin the (outer) \"server_name\" extension unless specifically directed otherwise\r\nby application layer code. Clients that do not include that value will not\r\nbenefit from the retry mechanism described in {{rejected-ech}}, therefore\r\napplications need to exercise caution if sending any other value, and e.g.\r\nonly use this approach with servers for which the application client can be\r\nconfident a correct ECHConfig value has been used and where the server\r\ndoes not make a check comparing the outer \"server_name\" to an \"\r\n`ECHConfig.contents.public_name` value.'\r\n\r\n",
+          "createdAt": "2023-10-20T16:35:48Z",
+          "updatedAt": "2023-10-20T16:35:48Z"
+        },
+        {
+          "author": "ekr",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I don't think the above quite makes sense, because the client (as a\r\nTLS library) won't know things, in particular cannot know what the\r\nserver may or may not check and, once a correct ECHConfig is used,\r\nand ECH decryption has succeeded, the retry scheme doesn't come\r\ninto play so there's no benefit to the server in that case in making\r\nthe check.\r\n\r\nNo, I don't think this is correct. The purpose of this mandate is to restrain the behavior of TLS clients on the wire, not the behavior of individual TLS libraries. \r\n\r\n\r\n\r\n\r\n",
+          "createdAt": "2023-10-20T17:16:34Z",
+          "updatedAt": "2023-10-20T17:16:34Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "My argument is not only only about libraries. The part of my argument about libraries referred only to the specific wording you proposed. (Maybe github issues aren't the best way to argue such things though, the quoting is hard to do and interpret IMO.)",
+          "createdAt": "2023-10-20T18:48:18Z",
+          "updatedAt": "2023-10-20T18:48:18Z"
+        },
+        {
+          "author": "ekr",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Well, your proposed wording is about the interaction of the application and the library, and I think that this text should refer solely to the behavior of the client as a unit. And the only normative text is about the library's behavior and my point is that the text should refer to the unit.\r\n\r\n",
+          "createdAt": "2023-10-20T19:00:16Z",
+          "updatedAt": "2023-10-20T19:00:16Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "So you'd prefer this (if forced to choose)?\r\n\r\n'Clients SHOULD place the the value of ECHConfig.contents.public_name\r\nin the (outer) \"server_name\" extension unless specifically directed otherwise. \r\nClients that do not include that value will not benefit from the retry mechanism\r\ndescribed in {{rejected-ech}}, therefore clients need to exercise caution if\r\nsending any other value, and e.g. only use this approach with servers for\r\nwhich the client can be confident a correct ECHConfig value has been used\r\nand where the server does not make a check comparing the outer \r\n\"server_name\" to an ``ECHConfig.contents.public_name`` value.'\r\n\r\nI could live with something like that but think it's less useful than the first text I suggested myself.\r\n",
+          "createdAt": "2023-10-20T19:10:53Z",
+          "updatedAt": "2023-10-20T19:10:53Z"
+        },
+        {
+          "author": "ekr",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> So you'd prefer this (if forced to choose)?\r\n> \r\n> 'Clients SHOULD place the the value of ECHConfig.contents.public_name in the (outer) \"server_name\" extension unless specifically directed otherwise. Clients that do not include that value will not benefit from the retry mechanism described in {{rejected-ech}}, therefore clients need to exercise caution if sending any other value, and e.g. only use this approach with servers for which the client can be confident a correct ECHConfig value has been used and where the server does not make a check comparing the outer \"server_name\" to an `ECHConfig.contents.public_name` value.'\r\n> \r\n> I could live with something like that but think it's less useful than the first text I suggested myself.\r\n\r\nAs I already provided text,  I'm not really sure why I would be forced to choose between this and your prior suggestion.\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+          "createdAt": "2023-10-20T20:16:15Z",
+          "updatedAt": "2023-10-20T20:16:15Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "\r\n\r\nOn 20/10/2023 21:16, Eric Rescorla wrote:\r\n> As I already provided text,  I'm not really sure why I would be\r\n> forced to choose between this and your prior suggestion.\r\n\r\nFair enough. I guess we can see if others chime in and/or take it\r\nto the list and/or Prague.\r\n\r\nS.\r\n",
+          "createdAt": "2023-10-20T20:53:30Z",
+          "updatedAt": "2023-10-20T20:53:30Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5kqLvU",
+          "commit": {
+            "abbreviatedOid": "ac034a5"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-19T22:20:52Z",
+          "updatedAt": "2023-10-19T22:23:36Z",
+          "comments": [
+            {
+              "originalPosition": 36,
+              "body": "I think it's a bit more clear to put this SHOULD at the end of the trial decryption loop.\r\n\r\n```suggestion\r\nEncodedClientHelloInner, as described in {{encoding-inner}}. It then stops\r\niterating over the candidate ECHConfig values.\r\n\r\nOnce the server has chosen the correct ECHConfig, it SHOULD verify that the\r\nvalue in the ClientHelloOuter \"server_name\" extension matches the value of\r\n`ECHConfig.contents.public_name`, and abort with an \"illegal_parameter\" alert\r\nif these do not match. Failure to enforce this check can allow clients to lie\r\nabout the ClientHelloOuter SNI, possibly with the intent of bypassing network\r\npolicies that might otherwise block ECH.\r\n```",
+              "createdAt": "2023-10-19T22:20:52Z",
+              "updatedAt": "2023-10-19T22:26:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5kqOzN",
+          "commit": {
+            "abbreviatedOid": "ac034a5"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-19T22:27:03Z",
+          "updatedAt": "2023-10-19T22:27:03Z",
+          "comments": [
+            {
+              "originalPosition": 36,
+              "body": "Thanks \ud83d\udc4d This is better!",
+              "createdAt": "2023-10-19T22:27:03Z",
+              "updatedAt": "2023-10-19T22:27:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5kqbB3",
+          "commit": {
+            "abbreviatedOid": "33d4163"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-19T23:27:49Z",
+          "updatedAt": "2023-10-19T23:27:49Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 576,
+      "id": "PR_kwDOB-yxNc5dUjKt",
+      "title": "editorial: Thus -> This",
+      "url": "https://github.com/tlswg/draft-ietf-tls-esni/pull/576",
+      "state": "MERGED",
+      "author": "cjpatton",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2023-10-19T22:12:41Z",
+      "updatedAt": "2023-10-19T22:13:16Z",
+      "baseRepository": "tlswg/draft-ietf-tls-esni",
+      "baseRefName": "master",
+      "baseRefOid": "539eab81d53815f09b7c70c3ee13960da0e977eb",
+      "headRepository": "cjpatton/draft-ietf-tls-esni",
+      "headRefName": "typo-1",
+      "headRefOid": "1f43286fff6f0ffa5db5301c4db551cdd7c02dd3",
+      "closedAt": "2023-10-19T22:13:16Z",
+      "mergedAt": "2023-10-19T22:13:16Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "9d068a00409f3fa5a6f37a3cf44e237335756efc"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOB-yxNc5kqH-W",
+          "commit": {
+            "abbreviatedOid": "1f43286"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-19T22:13:12Z",
+          "updatedAt": "2023-10-19T22:13:12Z",
           "comments": []
         }
       ]
