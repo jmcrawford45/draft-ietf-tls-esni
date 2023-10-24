@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-10-22T01:08:00.266661+00:00",
+  "timestamp": "2023-10-24T01:03:18.706708+00:00",
   "repo": "tlswg/draft-ietf-tls-esni",
   "labels": [
     {
@@ -53788,7 +53788,7 @@
       "labels": [],
       "body": "Closes #572 \r\n\r\ncc @dennisjackson, @davidben, @martinthomson, @cjpatton, @sftcd ",
       "createdAt": "2023-10-19T20:29:11Z",
-      "updatedAt": "2023-10-20T20:53:31Z",
+      "updatedAt": "2023-10-23T14:54:35Z",
       "baseRepository": "tlswg/draft-ietf-tls-esni",
       "baseRefName": "master",
       "baseRefOid": "539eab81d53815f09b7c70c3ee13960da0e977eb",
@@ -53939,6 +53939,27 @@
           "body": "\r\n\r\nOn 20/10/2023 21:16, Eric Rescorla wrote:\r\n> As I already provided text,  I'm not really sure why I would be\r\n> forced to choose between this and your prior suggestion.\r\n\r\nFair enough. I guess we can see if others chime in and/or take it\r\nto the list and/or Prague.\r\n\r\nS.\r\n",
           "createdAt": "2023-10-20T20:53:30Z",
           "updatedAt": "2023-10-20T20:53:30Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I'm OK with the stricter language @ekr suggests.  A stack can conform with this requirement if it has an option to disable the outer SNI.  A stack can conform with this requirement without implementing the outer SNI if it is clearly stated that it can only be used in cases where servers don't need the outer SNI (for the listed reasons).",
+          "createdAt": "2023-10-22T23:49:28Z",
+          "updatedAt": "2023-10-22T23:49:28Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "\r\n\r\nOn 23/10/2023 00:49, Martin Thomson wrote:\r\n> I'm OK with the stricter language @ekr suggests.  A stack can conform\r\n> with this requirement if it has an option to disable the outer SNI.\r\n> A stack can conform with this requirement without implementing the\r\n> outer SNI if it is clearly stated that it can only be used in cases\r\n> where servers don't need the outer SNI (for the listed reasons).\r\n\r\nI don't find my position altered tbh, but in case it helps, that\r\nought not delay production of an updated I-D by the editors. We\r\ncan argue whatever needs arguing before/during WGLC.\r\n\r\nS.\r\n\r\n",
+          "createdAt": "2023-10-23T01:28:24Z",
+          "updatedAt": "2023-10-23T01:28:24Z"
+        },
+        {
+          "author": "cjpatton",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": " If I understand @sftcd's point correctly (please let me know if I'm missing anything), it's that \"SHOULD\" is better because it permits clients to do something different \"as long as they know what they're doing\". But I'm worried that a careless reader might ignore the SHOULD and fill in the unspecified behavior in arbitrary ways. This could lead to bugs and/or increase the attack surface for applications built on top of TLS in ways we can't anticipate right now. \r\n\r\nI'd also prefer @ekr's stricter language, as a future-proofing measure. Simpler semantics is always better. That said, I actually think this PR is a strict improvement over the current text, since it makes the consequences of ignoring the MUST (or SHOULD) clear.",
+          "createdAt": "2023-10-23T14:54:15Z",
+          "updatedAt": "2023-10-23T14:54:35Z"
         }
       ],
       "reviews": [
