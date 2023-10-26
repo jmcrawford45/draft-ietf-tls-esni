@@ -1033,7 +1033,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Rescorla, et al.</td>
-<td class="center">Expires 21 April 2024</td>
+<td class="center">Expires 28 April 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1046,12 +1046,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-tls-esni-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2023-10-19" class="published">19 October 2023</time>
+<time datetime="2023-10-26" class="published">26 October 2023</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-04-21">21 April 2024</time></dd>
+<dd class="expires"><time datetime="2024-04-28">28 April 2024</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1106,7 +1106,7 @@ encrypting a ClientHello message under a server public key.<a href="#section-abs
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 21 April 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 28 April 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -2499,12 +2499,14 @@ decryption fails, the server continues to the next candidate ECHConfig.
 Otherwise, the server reconstructs ClientHelloInner from
 EncodedClientHelloInner, as described in <a href="#encoding-inner" class="auto internal xref">Section 5.1</a>. It then stops
 iterating over the candidate ECHConfig values.<a href="#section-7.1-9" class="pilcrow">¶</a></p>
-<p id="section-7.1-10">Once the server has chosen the correct ECHConfig, it SHOULD verify that the
-value in the ClientHelloOuter "server_name" extension matches the value of
-<code>ECHConfig.contents.public_name</code>, and abort with an "illegal_parameter" alert
-if these do not match. Failure to enforce this check can allow clients to lie
-about the ClientHelloOuter SNI, possibly with the intent of bypassing network
-policies that might otherwise block ECH.<a href="#section-7.1-10" class="pilcrow">¶</a></p>
+<p id="section-7.1-10">Once the server has chosen the correct ECHConfig, it MAY verify that the value
+in the ClientHelloOuter "server_name" extension matches the value of
+ECHConfig.contents.public_name, and abort with an "illegal_parameter" alert if
+these do not match. This optional check allows the server to limit ECH
+connections to only use the public SNI values advertised in its ECHConfigs.
+The server must be careful not to unnecessarily reject connections if the same
+ECHConfig id or keypair is used in multiple ECHConfigs with distinct public
+names.<a href="#section-7.1-10" class="pilcrow">¶</a></p>
 <p id="section-7.1-11">Upon determining the ClientHelloInner, the client-facing server checks that the
 message includes a well-formed "encrypted_client_hello" extension of type
 <code>inner</code> and that it does not offer TLS 1.2 or below. If either of these checks
