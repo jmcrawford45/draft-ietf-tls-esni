@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-10-24T01:03:18.706708+00:00",
+  "timestamp": "2023-10-29T01:07:06.488143+00:00",
   "repo": "tlswg/draft-ietf-tls-esni",
   "labels": [
     {
@@ -12215,7 +12215,7 @@
       "labels": [],
       "body": "The spec currently says:\r\n\r\n'The value of ECHConfig.contents.public_name MUST be placed in the  \"server_name\" extension.'\r\n\r\nI've never been fond of that, but I think it's also overly restrictive. For example, tests I've done with my and others' servers indicate that servers do not insist on this, if ECH decryption worked, and I think the code is doing the right thing there.\r\n\r\nI've also included the capability for a command-line override of public_name (in the outer SNI) in the cURL code I've proposed to that project. The logic there is that could be useful for some circumvention applications in future - I don't know that is or will be true, but it seems good to preserve the flexibility. (That said only my client library code seems to have an API that allows that override as of now.)\r\n\r\nSo I'd suggest we modify the MUST quoted above and add a SHOULD NOT (or make any equivalent change), to e.g.:\r\n\r\n- Clients SHOULD place the ECHConfig.contents.public_name in the (outer) server_name extension, unless specifically overridden by application layer code\r\n- In the event of successful ECH decryption, servers SHOULD NOT insist that the outer server_name extension carries the public_name from an ECHConfig corresponding to the relevant ECH decryption key.\r\n\r\nI don't think we need to say anything new on this topic related to ECH decryption failures.\r\n",
       "createdAt": "2023-10-17T22:54:31Z",
-      "updatedAt": "2023-10-19T01:06:03Z",
+      "updatedAt": "2023-10-26T10:39:05Z",
       "closedAt": null,
       "comments": [
         {
@@ -12287,6 +12287,20 @@
           "body": "I'd be ok with that.",
           "createdAt": "2023-10-19T01:06:02Z",
           "updatedAt": "2023-10-19T01:06:02Z"
+        },
+        {
+          "author": "ckcr4lyf",
+          "authorAssociation": "NONE",
+          "body": "I'd talked about this a bit on the mailing list, but didn't receive much response there. (See: https://mailarchive.ietf.org/arch/msg/tls/HUG1CU0Q4PorZ7fD0yafVfj7VUY/)\r\n\r\nIs github the preferred discussion point for ECH rather than the mailing list? If so I will state my view of it here as well for those not on the mailing list",
+          "createdAt": "2023-10-26T10:36:58Z",
+          "updatedAt": "2023-10-26T10:36:58Z"
+        },
+        {
+          "author": "ckcr4lyf",
+          "authorAssociation": "NONE",
+          "body": "FYI: My main point revolves around the public name \"leaking\" which website you're connecting to anyway, which was one of the problems with SNI initially (and how some ISPs such as Jio in India were blocking websites).\r\n\r\nUsing the public_name field only is viable if you're behind a big corporation like Cloudflare, but if you want to do it for your personal website it gets tricky (which \u6d9b\u53d4  mentioned here: https://mailarchive.ietf.org/arch/msg/tls/0yxB-VwM8ayf6QLWpqCBcrSCFT4/)",
+          "createdAt": "2023-10-26T10:39:05Z",
+          "updatedAt": "2023-10-26T10:39:05Z"
         }
       ]
     }
@@ -53788,13 +53802,13 @@
       "labels": [],
       "body": "Closes #572 \r\n\r\ncc @dennisjackson, @davidben, @martinthomson, @cjpatton, @sftcd ",
       "createdAt": "2023-10-19T20:29:11Z",
-      "updatedAt": "2023-10-23T14:54:35Z",
+      "updatedAt": "2023-10-26T15:57:39Z",
       "baseRepository": "tlswg/draft-ietf-tls-esni",
       "baseRefName": "master",
       "baseRefOid": "539eab81d53815f09b7c70c3ee13960da0e977eb",
       "headRepository": "tlswg/draft-ietf-tls-esni",
       "headRefName": "caw/relax-outer-sni",
-      "headRefOid": "33d4163c47a93f85b73ac673cdf67883f0ba0f73",
+      "headRefOid": "845aeaabc4da4076c283c989b230b7bc230c8ae2",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -53960,6 +53974,27 @@
           "body": " If I understand @sftcd's point correctly (please let me know if I'm missing anything), it's that \"SHOULD\" is better because it permits clients to do something different \"as long as they know what they're doing\". But I'm worried that a careless reader might ignore the SHOULD and fill in the unspecified behavior in arbitrary ways. This could lead to bugs and/or increase the attack surface for applications built on top of TLS in ways we can't anticipate right now. \r\n\r\nI'd also prefer @ekr's stricter language, as a future-proofing measure. Simpler semantics is always better. That said, I actually think this PR is a strict improvement over the current text, since it makes the consequences of ignoring the MUST (or SHOULD) clear.",
           "createdAt": "2023-10-23T14:54:15Z",
           "updatedAt": "2023-10-23T14:54:35Z"
+        },
+        {
+          "author": "dennisjackson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "The current PR for the client reads: \r\n\r\n>    [The Client] SHOULD place the value of `ECHConfig.contents.public_name` in the\r\n>    \"server_name\" extension. Clients that do not follow this step, or place a\r\n>    different value in the \"server_name\" extension, risk breaking the retry\r\n>    mechanism described in {{rejected-ech}} or failing to interoperate with\r\n>    servers that require this step to be done; see {{client-facing-server}}.\r\n\r\nI think this is fine. It's very clear as to what the expected behaviour is and what the consequences might be. For the server:\r\n\r\n> Once the server has chosen the correct ECHConfig, it SHOULD verify that the\r\n> value in the ClientHelloOuter \"server_name\" extension matches the value of\r\n> `ECHConfig.contents.public_name`, and abort with an \"illegal_parameter\" alert\r\n> if these do not match. Failure to enforce this check can allow clients to lie\r\n> about the ClientHelloOuter SNI, possibly with the intent of bypassing network\r\n> policies that might otherwise block ECH.\r\n\r\nI don't think this text is great for two reasons: \r\n 1) It's not clear how to choose the correct ECHConfig, especially if multiple configs use the same keypair and distinct public names (as @sftcd pointed out).\r\n 2) I don't think there's going to be any kind of consensus for recommending this check (with a SHOULD) or the rationale for why. Implementers are going to be split between those doing the check and those refusing to. \r\n\r\nI see we've already had plenty of suggested changes with little support, so one more can't hurt: \r\n\r\n> Once the server has chosen the correct ECHConfig, it MAY verify that the value in the ClientHelloOuter \"server_name\" extension matches the value of `ECHConfig.contents.public_name`, and abort with an \"illegal_parameter\" alert if these do not match. This optional check allows the server to limit ECH connections to only use the public SNI values advertised in its ECHConfigs. The server must be careful not to unnecessarily reject connections if the same ECHConfig id or keypair is used in multiple ECHConfigs with distinct public names.  \r\n\r\nThe intent here is to permit the check without taking a stand on whether its desirable or necessary. ",
+          "createdAt": "2023-10-26T11:23:35Z",
+          "updatedAt": "2023-10-26T11:24:25Z"
+        },
+        {
+          "author": "sftcd",
+          "authorAssociation": "COLLABORATOR",
+          "body": "\r\n\r\nOn 26/10/2023 12:23, Dennis Jackson wrote:\r\n> Once the server has chosen the correct ECHConfig, it MAY verify that the \r\n> value in the ClientHelloOuter \"server_name\" extension matches the value \r\n> of `ECHConfig.contents.public_name`, and abort with an \r\n> \"illegal_parameter\" alert if these do not match. This optional check \r\n> allows the server to limit ECH connections to only use the public SNI \r\n> values advertised in its ECHConfigs. The server must be careful not to \r\n> unnecessarily reject connections if the same ECHConfig id or keypair is \r\n> used in multiple ECHConfigs with distinct public names.\r\n\r\nI'd be fine with the above. (Maybe with a friendly amendment\r\nof s/chosen the correct/successfully decrypted/ or similar.)\r\n\r\nAnd as Dennis said, I think we're all on the same page wrt the\r\nclient side.\r\n\r\nS.\r\n",
+          "createdAt": "2023-10-26T11:33:49Z",
+          "updatedAt": "2023-10-26T11:33:49Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Took @dennisjackson's suggestion. I'm fine with this as well.",
+          "createdAt": "2023-10-26T13:42:49Z",
+          "updatedAt": "2023-10-26T13:42:49Z"
         }
       ],
       "reviews": [
@@ -54014,6 +54049,39 @@
           "body": "",
           "createdAt": "2023-10-19T23:27:49Z",
           "updatedAt": "2023-10-19T23:27:49Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5lTwfJ",
+          "commit": {
+            "abbreviatedOid": "33d4163"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-26T13:35:04Z",
+          "updatedAt": "2023-10-26T13:35:05Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "```suggestion\r\nOnce the server has chosen the correct ECHConfig, it MAY verify that the value\r\nin the ClientHelloOuter \"server_name\" extension matches the value of\r\nECHConfig.contents.public_name, and abort with an \"illegal_parameter\" alert if\r\nthese do not match. This optional check allows the server to limit ECH\r\nconnections to only use the public SNI values advertised in its ECHConfigs.\r\nThe server must be careful not to unnecessarily reject connections if the same\r\nECHConfig id or keypair is used in multiple ECHConfigs with distinct public\r\nnames.\r\n```",
+              "createdAt": "2023-10-26T13:35:04Z",
+              "updatedAt": "2023-10-26T13:35:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOB-yxNc5lVA2H",
+          "commit": {
+            "abbreviatedOid": "845aeaa"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "I'm fine with this. I think it's strictly better than the status quo regardless of the verb we choose. Clarifying what can go wrong if the verb is ignored is the most important thing.",
+          "createdAt": "2023-10-26T15:57:39Z",
+          "updatedAt": "2023-10-26T15:57:39Z",
           "comments": []
         }
       ]
